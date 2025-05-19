@@ -1,0 +1,90 @@
+.container {
+    display: flex;
+    flex-direction: column;
+   align-items: center;
+    height: 100vh;
+}
+
+.grid {
+    margin: 1rem;
+    display: flex;
+    width: 50%;
+}
+
+.create {
+    margin: 1rem;
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    padding: 20px;
+    margin: 20px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+.title {
+    display:flex;
+    width: 100%;
+    justify-content: center;
+    text-decoration: underline;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.main .create_button {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    margin-top: 3rem;
+}
+
+.main .create_button .create_button_style {
+    border-radius: 10px;
+}
+
+.main .main_component {
+    display: flex;
+    flex-direction: column;
+    font-weight: bolder;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.main .main_component .members {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+}
+
+.members_button {
+    margin-left:1rem;
+    border-radius: 10px;
+}
+
+.smallRow .dxgvDataRow {
+    height: 25px !important; /* Adjust row height */
+}
+
+.return {
+    display:flex;
+    align-content:start;
+}
+
+.selectedUserStyle {
+    font-weight: bold;
+    color: #32CD32;
+}
+
+.scrollable-grid {
+    max-height: 600px; /* Adjust as needed */
+    overflow-y: auto; /* Enables vertical scrolling */
+}
+
+

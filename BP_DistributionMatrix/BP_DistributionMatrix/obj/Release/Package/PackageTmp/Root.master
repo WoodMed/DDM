@@ -1,0 +1,245 @@
+<%@ Master Language="C#" AutoEventWireup="true" Inherits="Root" Codebehind="Root.master.cs" %>
+
+<%@ Register Assembly="DevExpress.Web.ASPxTreeList.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Namespace="DevExpress.Web.ASPxTreeList" TagPrefix="dx" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server" enableviewstate="false">
+    <meta charset="UTF-8" />
+    <title></title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href='<%# ResolveUrl("~/Content/Content.css") %>' />
+    <link rel="stylesheet" type="text/css" href='<%# ResolveUrl("~/Content/Layout.css") %>' />
+    <asp:ContentPlaceHolder ID="Head" runat="server"></asp:ContentPlaceHolder>
+    <script type="text/javascript" src='<%# ResolveUrl("~/Content/Script.js") %>'></script>
+    <link rel="stylesheet" href="Content/fontawesome.min.css">
+    <link rel="shortcut icon" type="image/x-icon" href="~/Content/images/favicon.ico">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        let x, y;
+
+        function treeList_NodeClick(s, e) {
+
+            if (s.GetNodeState(e.nodeKey) == "Child") {
+                x = event.clientX;
+                y = event.clientY;
+                window.location.href = "DistributionMatrix.aspx?folderId=" + e.nodeKey;
+            }
+
+        }
+
+        function showClientPopup() {
+            clientPopupMenu.ShowAtPos(x, y);
+        }
+        function OnInit(s, e) {
+            AdjustSize();
+        }
+        function OnEndCallback(s, e) {
+            AdjustSize();
+        }
+        function AdjustSize() {
+            var height = Math.max(0, document.documentElement.clientHeight);
+            clientTL.SetHeight(height);
+        }
+    </script>
+    <style>
+        .web-title {
+            font-weight: bolder;
+        }
+    </style>
+
+</head>
+
+<body>
+    <form id="form1" runat="server" class="form">
+        <div class="content-wrapper">
+            
+
+            <dx:ASPxPanel runat="server" ID="HeaderPanel" ClientInstanceName="headerPanel" FixedPosition="WindowTop"
+                FixedPositionOverlap="true" CssClass="app-header">
+                <PanelCollection>
+                    <dx:PanelContent runat="server">
+                        <div class="left-block">
+
+                            <dx:ASPxMenu runat="server" ID="LeftAreaMenu" ClientInstanceName="leftAreaMenu"
+                                ItemAutoWidth="false" ItemWrap="false" SeparatorWidth="0" EnableHotTrack="false"
+                                Width="100%" CssClass="header-menu" SyncSelectionMode="None">
+                                <ItemStyle VerticalAlign="Middle" CssClass="item" />
+                                <Items>
+
+                                    <dx:MenuItem Text="" Name="ToggleLeftPanel" GroupName="LeftPanel">
+                                        <ItemStyle CssClass="toggle-item vertically-aligned" CheckedStyle-CssClass="checked selected" />
+                                        <Image Url="~/Content/Images/menu.svg" Height="18px" Width="18px" />
+                                    </dx:MenuItem>
+
+                                    <dx:MenuItem Text="Web DDM" Name="WebDDM">
+                                        <ItemStyle CssClass="web-title" />
+                                    </dx:MenuItem>
+
+                                    <dx:MenuItem Text="" Name="Logo">
+                                        <ItemStyle CssClass="toggle-item vertically-aligned" />
+                                        <Image Url="~/Content/Images/logo.svg" Height="33px" Width="" />
+                                    </dx:MenuItem>
+
+                                </Items>
+                                <ClientSideEvents ItemClick="onLeftMenuItemClick" />
+                            </dx:ASPxMenu>
+                        </div>
+
+                        <div class="right-block">
+                            <dx:ASPxMenu runat="server" ID="RightAreaMenu" ClientInstanceName="rightAreaMenu"
+                                ItemAutoWidth="false" ItemWrap="false" ShowPopOutImages="False"
+                                SeparatorWidth="0" ApplyItemStyleToTemplates="true"
+                                Width="100%" CssClass="header-menu" OnItemClick="RightAreaMenu_ItemClick">
+                                <ItemStyle VerticalAlign="Middle" CssClass="item" />
+                                <SubMenuItemStyle CssClass="item" />
+                                <SubMenuStyle CssClass="header-sub-menu" />
+                                <Items>
+                                    <dx:MenuItem Name="AccountItem" ItemStyle-CssClass="image-item">
+                                        <TextTemplate>
+                                            <div class="account-background">
+                                                <div runat="server" id="AccountImage" class="empty-image" />
+                                            </div>
+                                        </TextTemplate>
+
+                                        <%-- Profile Symbol Top Right --%>
+                                        <Items>
+                                            <dx:MenuItem Name="SignInItem" Text="Sign in" NavigateUrl="~/Account/SignIn.aspx" runat="server"></dx:MenuItem>
+                                            <dx:MenuItem Name="MyAccountItem" Text="My account" ItemStyle-CssClass="myaccount-item">
+                                                <TextTemplate>
+                                                    <div class="user-info">
+                                                        <div class="avatar">
+                                                            <img runat="server" id="AvatarUrl" src="Content/Images/user.svg" />
+                                                        </div>
+                                                        <div class="text-container">
+                                                            <dx:ASPxLabel ID="FirstNameLastLabel" runat="server" CssClass="user-name" Visible="true"></dx:ASPxLabel>
+                                                            <dx:ASPxLabel ID="UserNameLabel" runat="server" CssClass="user-name" Visible="true"></dx:ASPxLabel>
+                                                            <dx:ASPxLabel ID="EmailLabel" runat="server" CssClass="email" Visible="true"></dx:ASPxLabel>
+                                                        </div>
+                                                    </div>
+                                                </TextTemplate>
+                                            </dx:MenuItem>
+                                            <dx:MenuItem Name="Profile" Text="Profile" NavigateUrl="~/Account/profilePage.aspx" Image-Url="Content/Images/user.svg" Image-Height="16px"></dx:MenuItem>
+                                            <dx:MenuItem Name="SignOutItem" Text="Sign out" Image-Url="Content/Images/sign-out.svg" Image-Height="16px"></dx:MenuItem>
+                                        </Items>
+
+                                    </dx:MenuItem>
+                                    <dx:MenuItem Text="" Name="ToggleRightPanel" GroupName="RightPanel">
+                                        <ItemStyle CssClass="toggle-item vertically-aligned" CheckedStyle-CssClass="checked selected" />
+                                        <Image Height="18px" SpriteProperties-CssClass="image" />
+                                    </dx:MenuItem>
+                                </Items>
+                                <ClientSideEvents ItemClick="onRightMenuItemClick" />
+                            </dx:ASPxMenu>
+                        </div>
+
+
+                        <!-- NAVBAR -->
+                        <div class="menu-container">
+                            <div>
+                                <dx:ASPxMenu runat="server" ID="ApplicationMenu" ClientInstanceName="applicationMenu"
+                                    DataSourceID="ApplicationMenuDataSource" ItemAutoWidth="false" EnableSubMenuScrolling="true"
+                                    ShowPopOutImages="True" SeparatorWidth="0" ItemWrap="false"
+                                    CssClass="header-menu application-menu" Width="100%" HorizontalAlign="Right" OnItemDataBound="ApplicationMenu_ItemDataBound">
+                                    <SettingsAdaptivity Enabled="true" EnableAutoHideRootItems="true" />
+                                    <ItemStyle VerticalAlign="Middle" CssClass="item" SelectedStyle-CssClass="selected" HoverStyle-CssClass="hovered" />
+                                    <ItemImage Width="22" Height="22" />
+                                    <SubMenuStyle CssClass="header-sub-menu" />
+                                    <AdaptiveMenuImage SpriteProperties-CssClass="adaptive-image" />
+                                </dx:ASPxMenu>
+                            </div>
+                        </div>
+
+                        <div class="dx-clear"></div>
+                    </dx:PanelContent>
+                </PanelCollection>
+            </dx:ASPxPanel>
+
+
+            <dx:ASPxPanel runat="server" ID="LeftPanel" ClientInstanceName="leftPanel"
+                Collapsible="true" ScrollBars="None" FixedPosition="WindowLeft" Width="20%" Height="100%"
+                CssClass="left-panel" Paddings-Padding="0" Styles-ExpandBar-CssClass="expand-bar">
+                <SettingsCollapsing ExpandButton-Visible="false" ExpandEffect="PopupToRight" AnimationType="Slide" Modal="true" />
+                <PanelCollection>
+                    <dx:PanelContent>
+                        <asp:ContentPlaceHolder runat="server" ID="LeftPanelContent"></asp:ContentPlaceHolder>
+                            <dx:ASPxTreeList ID="ASPxTreeList1" ClientInstanceName="clientTL" runat="server" AutoGenerateColumns="False"
+                                KeyFieldName="FolderId"
+                                ParentFieldName="ParentId"
+                                Width="100%"
+                                Height="100%"
+                                AutoExpand="True"
+                                OnHtmlRowPrepared="Index_HtmlRowPrepared"
+                                KeyboardSupport="true"
+                                EnableViewState="true">
+                                <Columns>
+                                    <dx:TreeListTextColumn FieldName="FolderName"
+                                        AutoFilterCondition="Default"
+                                        ShowInFilterControl="Default"
+                                        VisibleIndex="0"
+                                        Caption="Folder Name"
+                                        AllowHeaderFilter="True"
+                                        ReadOnly="True">
+                                    </dx:TreeListTextColumn>
+                                </Columns>
+
+                                <SettingsBehavior AllowFocusedNode="True" ExpandCollapseAction="NodeClick" ExpandNodesOnFiltering="true"></SettingsBehavior>
+                                <ClientSideEvents NodeClick="treeList_NodeClick" />
+                                <SettingsDataSecurity AllowEdit="False" AllowInsert="False" AllowDelete="False"></SettingsDataSecurity>
+
+                            </dx:ASPxTreeList>
+
+                    </dx:PanelContent>
+
+                </PanelCollection>
+                <ClientSideEvents Init="onLeftPanelInit" Collapsed="onLeftPanelCollapsed" />
+            </dx:ASPxPanel>
+
+
+            <dx:ASPxPanel runat="server" ID="RightPanel" ClientInstanceName="rightPanel"
+                FixedPosition="WindowRight" FixedPositionOverlap="true" Collapsible="true" Paddings-Padding="0"
+                ScrollBars="Auto" Width="260px" CssClass="right-panel" Styles-ExpandBar-CssClass="expand-bar">
+                <SettingsCollapsing ExpandButton-Visible="false" ExpandEffect="PopupToLeft" Modal="true" />
+                <PanelCollection>
+                    <dx:PanelContent>
+                        <asp:ContentPlaceHolder ID="RightPanelContent" runat="server"></asp:ContentPlaceHolder>
+                    </dx:PanelContent>
+                </PanelCollection>
+                <ClientSideEvents Collapsed="onRightPanelCollapsed" />
+            </dx:ASPxPanel>
+
+            <dx:ASPxPanel runat="server" ID="PageToolbarPanel" ClientInstanceName="pageToolbarPanel"
+                CssClass="page-toolbar-wrapper">
+                <PanelCollection>
+                    <dx:PanelContent>
+                        <asp:ContentPlaceHolder runat="server" ID="PageToolbar" />
+                    </dx:PanelContent>
+                </PanelCollection>
+                <ClientSideEvents Init="onPageToolbarInit" />
+            </dx:ASPxPanel>
+
+            <div class="content" id="pageContent">
+                <asp:ContentPlaceHolder runat="server" ID="PageContent"></asp:ContentPlaceHolder>
+            </div>
+
+            <%-- FOOTER --%>
+            <div class="footer-wrapper" id="footerWrapper">
+                <div class="footer">
+                    <span class="footer-left">&copy; <% DateTime.Now.Year.ToString(); %> hccuk</span>
+                    <span class="footer-right">
+                        <a class="footer-link" href="privacy.aspx">Privacy Policy</a>
+                        <a class="footer-link" href="terms.aspx">Terms of Service</a>
+                        <a class="footer-link" href="#"><strong>Version</strong> v1.0.1 - build 0001 (master)</a>
+                    </span>
+                </div>
+            </div>
+            <dx:ASPxSiteMapDataSource runat="server" ID="ApplicationMenuDataSource" SiteMapFileName="~/App_Data/ApplicationMenuDataSource.sitemap" />
+            <dx:ASPxGlobalEvents runat="server">
+                <ClientSideEvents ControlsInitialized="onControlsInitialized" BrowserWindowResized="onBrowserWindowResized" />
+            </dx:ASPxGlobalEvents>
+        </div>
+    </form>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BP_DistributionMatrix", "BP_DistributionMatrix\BP_DistributionMatrix.csproj", "{7B6A96C7-290A-4736-8DC3-8D71428FC4C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B6A96C7-290A-4736-8DC3-8D71428FC4C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B6A96C7-290A-4736-8DC3-8D71428FC4C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B6A96C7-290A-4736-8DC3-8D71428FC4C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B6A96C7-290A-4736-8DC3-8D71428FC4C0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {30F01E91-4DA5-4AB3-94CA-48EB8DBF665C}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,29 @@
+
+.statusLabel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: xx-large;
+    padding-top:1rem;
+}
+
+.ddm_menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    background-color: #e0e0e0;
+}
+
+.menu_button {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.menu_button_style {
+    border-radius: 0.5rem;
+}
+
+.menu_dropdown {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4); /* Intense shadow */
+}
