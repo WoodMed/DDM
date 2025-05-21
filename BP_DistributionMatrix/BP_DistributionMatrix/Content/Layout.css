@@ -1,55 +1,25 @@
 ﻿/* Layout */
 html, body, .form
 {
+    display: flex;
+    flex-direction: column;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-}
-
-body
-{
-    min-height: 100%;
-    padding-top: 1px;
-    margin-top: -1px;
-}
-
-.form
-{
-    height: calc(100vh - 3.13rem); /* 3.13rem is the Header size */
-}
-
-.content-wrapper
-{
-    position: relative;
-    padding-bottom: 46px; /* Footer Height */
-    min-height: calc(100% - 3.13rem); /* 3.13rem is the Header size */
-}
-html
-{
     height: 100%;
 }
 
-/* Content */
-.content
-{
-    width: 100%;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    min-height: 100%;
-    height: 100%;
-    -webkit-overflow-scrolling: touch;
+.content-wrapper {
+    display: block;
+    min-height: auto;
+    margin: 0;
+    padding: 0;
 }
 
 /* Footer */
-.footer-wrapper
-{
-    height: 46px; /* Footer Height */
-    position: absolute;
-    bottom: 0;
-    width: 100%
+.footer-wrapper {
+    position: relative;
+    height: 10%; /* Footer Height */
+    background-color: #f8f8f8;
 }
 
 .footer
