@@ -28,7 +28,7 @@
                     Width="100%" AllowSelectByRowClick="true"
                     ClientSideEvents-SelectionChanged="OnSelectionChanged"
                     OnCustomButtonCallback="TeamsGrid_CustomButtonCallback"
-                    OnCommandButtonInitialize="TeamsGrid_CommandButtonInitialize">
+                    OnCustomButtonInitialize="TeamsGrid_CommandButtonInitialize">
 
                 <SettingsBehavior AllowSelectByRowClick="True"/>
                 <Styles>
@@ -53,17 +53,53 @@
                         <CellStyle HorizontalAlign="Center" Font-Size="14px" />
                     </dx:GridViewDataTextColumn>
 
-                    <dx:GridViewCommandColumn Caption=" " Width="15%">
+                    <dx:GridViewCommandColumn Caption="Action" Width="15%">
                         <HeaderStyle HorizontalAlign="Center" Font-Size="16px" Border-BorderWidth="1px" Border-BorderColor="#000" />
                         <CellStyle Border-BorderWidth="1px" Border-BorderColor="#000" />
                         <CustomButtons>
-                            <dx:GridViewCommandColumnCustomButton ID="Delete" Text="" Image-Url="~/Content/Images/delete.svg" Image-Width="16px" />
+                            <dx:GridViewCommandColumnCustomButton ID="Delete" Text="" Image-Url="~/Content/Images/delete.svg" Image-Width="16px">
+                            </dx:GridViewCommandColumnCustomButton>
                         </CustomButtons>
                     </dx:GridViewCommandColumn>
 
                 </Columns>
+                <ClientSideEvents CustomButtonClick="onDeleteClicked" />
             </dx:ASPxGridView>
 
         </div>
+
+        <dx:ASPxPopupControl  
+                ID="deleteCheckPopup"  
+                runat="server"  
+                ClientInstanceName="deleteCheckPopup"
+                PopupHorizontalAlign="WindowCenter"
+                PopupVerticalAlign="WindowCenter"
+                ShowCloseButton="true"
+                Modal="true"
+                AllowResize="true"
+                Width="350px"
+                HeaderText="Confirm Deletion"
+                CloseAction="CloseButton"
+                PopupAnimationType="Fade">
+    
+            <ContentCollection>
+                <dx:PopupControlContentControl runat="server">
+                    <dx:ASPxLabel ID="DeleteLabel" runat="server" Text="Are you sure you want to delete this team?" Font-Size="15px"/>
+            
+                    <div style="text-align: center; margin-top: 20px;">
+                        <dx:ASPxButton ID="DeleteButton" runat="server" Text="Delete"
+                        AutoPostBack="true" OnClick="ConfirmDelete_Click"
+                        ClientSideEvents-Click="onDelete" Theme="Material"
+                        RenderMode="Danger" Style="margin-right: 30px;" />
+
+                        <dx:ASPxButton ID="CancelButton" runat="server" Text="Cancel" 
+                            AutoPostBack="false" ClientSideEvents-Click="onCancelDelete" Theme="Material"
+                            RenderMode="Button"/>
+                    </div>
+                </dx:PopupControlContentControl>
+            </ContentCollection>
+        </dx:ASPxPopupControl>
     </div>
+
+     <input type="hidden" id="hiddenTeamId" runat="server" />
 </asp:Content>

@@ -107,6 +107,9 @@ public partial class Root : MasterPage
         {
             LeftPanel.Collapsible = false;
         }
+        else if (currentPath.StartsWith("/DistributionMatrix.aspx", StringComparison.OrdinalIgnoreCase)) {
+            LeftPanel.Collapsible = true;
+        }
         else
         {
             LeftPanel.Collapsible = true;
@@ -119,6 +122,11 @@ public partial class Root : MasterPage
             Request.Url.AbsolutePath.StartsWith("/TeamsV2/Edit.aspx", StringComparison.OrdinalIgnoreCase)))
         {
             Session["TeamUsers"] = null;
+        }
+        else if (!currentPath.StartsWith("/DistributionMatrix.aspx", StringComparison.OrdinalIgnoreCase))
+        {
+            Session["CurrentReport"] = null;
+            Session["CurrentDetails"] = null;
         }
 
     }

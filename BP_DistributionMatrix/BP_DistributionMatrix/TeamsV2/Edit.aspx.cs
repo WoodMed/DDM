@@ -28,6 +28,7 @@ namespace BP_DistributionMatrix {
         private string _name;
         private int _userId;
         List<TeamUser_Model> _availableUsers;
+        List<MemberData> _selectedUsers;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -70,6 +71,14 @@ namespace BP_DistributionMatrix {
             }
             else _members = (List<MemberData>)Session["TeamUsers"];
 
+            _selectedUsers = new List<MemberData>();
+            if (Session["TeamUsers"] != null)
+            {
+                _selectedUsers = (List<MemberData>)Session["TeamUsers"];
+                TeamsGrid.DataSource = _selectedUsers;
+                TeamsGrid.DataBind();
+            }
+
             // bind popup
             BindAvailableUsers();
 
@@ -89,18 +98,6 @@ namespace BP_DistributionMatrix {
             listAvailableUsers.TextField = "PopupDisplay";
             listAvailableUsers.DataBind();
 
-            // Pre-select users that exist in the session
-            if (_members != null)
-            {
-                foreach (ListEditItem item in listAvailableUsers.Items)
-                {
-                    int itemId = Convert.ToInt32(item.Value);
-                    if (_members.Any(u => u.Id == itemId))
-                    {
-                        item.Selected = true; // Mark as selected
-                    }
-                }
-            }
         }
 
         protected void gridTeamMembers_CustomButtonCallback(object sender, ASPxGridViewCustomButtonCallbackEventArgs e)
@@ -215,6 +212,23 @@ namespace BP_DistributionMatrix {
                         Role = "Member"
                     });
                 }
+            }
+
+            // Little detour to ensure that roles are preserved
+            if (_selectedUsers != null)
+            {
+                var selectedUsersMap = _selectedUsers.ToDictionary(user => user.Id);
+
+                foreach (var user in teamUsersDataSource)
+                {
+                    if (!selectedUsersMap.ContainsKey(user.Id))
+                    {
+                        _selectedUsers.Add(user);
+                    }
+                }
+
+                _selectedUsers = _selectedUsers.Where(user => teamUsersDataSource.Any(tu => tu.Id == user.Id)).ToList();
+                teamUsersDataSource = new List<MemberData>(_selectedUsers);
             }
 
             Session["TeamUsers"] = teamUsersDataSource;

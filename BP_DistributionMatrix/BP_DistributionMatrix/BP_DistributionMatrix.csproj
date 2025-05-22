@@ -246,7 +246,7 @@
     <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
     <Content Include="GridView.aspx" />
-    <Content Include="RebeccaPage.aspx" />
+    <Content Include="Report.aspx" />
     <Content Include="Scripts\TeamsV2\Create.js" />
     <Content Include="Scripts\TeamsV2\List.js" />
     <Content Include="TeamsV2\Edit.aspx" />
@@ -329,16 +329,18 @@
     <Compile Include="GridView.aspx.designer.cs">
       <DependentUpon>GridView.aspx</DependentUpon>
     </Compile>
-    <Compile Include="RebeccaPage.aspx.cs">
-      <DependentUpon>RebeccaPage.aspx</DependentUpon>
+    <Compile Include="Models\DALs\Reports_DAL.cs" />
+    <Compile Include="Models\Report_Model.cs" />
+    <Compile Include="Report.aspx.cs">
+      <DependentUpon>Report.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="RebeccaPage.aspx.designer.cs">
-      <DependentUpon>RebeccaPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="Models\DALs\Teams_DAL.cs" />
     <Compile Include="Models\TeamsV2\TeamUser_Model.cs" />
     <Compile Include="Models\TeamsV2\Teams_Model.cs" />
+    <Compile Include="Report.aspx.designer.cs">
+      <DependentUpon>Report.aspx</DependentUpon>
+    </Compile>
     <Compile Include="TeamsV2\Edit.aspx.cs">
       <DependentUpon>Edit.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

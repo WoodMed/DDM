@@ -24,24 +24,29 @@
 
             <div class="main">
 
+                <p style="margin-bottom: 3px;"><b>Leaders</b> can modify teams</p>
+                <p style="margin-top: 3px;"><b>Members</b> can view but not modify a team</p>
+
                 <!-- Team name -->
                 <div class="main_component">
                     <dx:ASPxLabel ID="TeamLabel" runat="server" Text="Name:"
-                    Font-Size="18px" Font-Bold="true" />
+                    Font-Size="18px" Font-Bold="true" ForeColor="Black"/>
                     <dx:ASPxLabel ID="TeamErrorLabel" runat="server" Text="Please enter a value"
                     Font-Size="12px" ForeColor="red" />
-                    <dx:ASPxTextBox ID="TeamInput" runat="server" Width="300px" />
+                    <dx:ASPxTextBox ID="TeamInput" runat="server" Width="300px" MaxLength="30" NullText="i.e Information Management..." />
                 </div>
                 
                 <!-- Add Members -->
                 <div class="main_component">
                     <div class="members">
                         <dx:ASPxLabel ID="MembersLabel" runat="server" Text="Members:"
-                        Font-Size="18px" Font-Bold="true" />
-                        <dx:ASPxButton CssClass="members_button" runat="server" Text="+ Add Member" 
+                        Font-Size="18px" Font-Bold="true" ForeColor="Black" />
+                        <dx:ASPxButton CssClass="members_button" runat="server" Text="+ Add Members" 
                         AutoPostBack="false" ClientSideEvents-Click="ShowPopup" />
                     </div>
 
+
+                <!-- MAIN GRID -->
                 <dx:ASPxGridView ID="TeamsGrid" runat="server" AutoGenerateColumns="False" KeyFieldName="Id"
                     Width="70%" AllowSelectByRowClick="false"  EnableCallBacks="true" CssClass="smallRow"
                     OnCustomButtonCallback="gridTeamMembers_CustomButtonCallback" OnCustomButtonInitialize="gridTeamMembers_CustomButtonInitialize">
@@ -66,7 +71,7 @@
                         <CellStyle HorizontalAlign="Center" Font-Size="14px" />
                     </dx:GridViewDataColumn>
 
-                        <dx:GridViewCommandColumn Width="30%">
+                        <dx:GridViewCommandColumn Width="30%" Caption="Action">
                             <HeaderStyle HorizontalAlign="Center" Font-Size="16px" />
                             <CellStyle Border-BorderWidth="1px" Border-BorderColor="#000" />
                             <CustomButtons>

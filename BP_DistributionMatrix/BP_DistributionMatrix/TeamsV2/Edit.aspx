@@ -24,9 +24,12 @@
 
                 <div class="main">
 
+                    <p style="margin-bottom: 3px;"><b>Leaders</b> can modify teams</p>
+                    <p style="margin-top: 3px;"><b>Members</b> can view but not modify a team</p>
+
                     <div class="main_component">
                         <dx:ASPxLabel ID="TeamLabel" runat="server" Text="Team Name: "
-                        Font-Size="18px" Font-Bold="true" />
+                        Font-Size="18px" Font-Bold="true" ForeColor="Black"/>
                         <dx:ASPxLabel ID="TeamErrorLabel" runat="server" Text="Please enter a value"
                         Font-Size="12px" ForeColor="red" />
                         <dx:ASPxTextBox ID="TeamInput" runat="server" Width="300px" />
@@ -34,9 +37,9 @@
 
                     <div class="main_component">
                         <div class="members">
-                            <dx:ASPxLabel ID="ASPxLabel1" runat="server" Text="Members"
-                            Font-Size="18px" Font-Bold="true" />
-                            <dx:ASPxButton CssClass="members_button" runat="server" Text="+ Add Member" 
+                            <dx:ASPxLabel ID="ASPxLabel1" runat="server" Text="Members:"
+                            Font-Size="18px" Font-Bold="true" ForeColor="Black" />
+                            <dx:ASPxButton CssClass="members_button" runat="server" Text="+ Add Members" 
                             AutoPostBack="false" ClientSideEvents-Click="ShowPopup" />
                             <dx:ASPxButton CssClass="members_button" runat="server" Text="Leave Team" 
                              AutoPostBack="false" OnClick="LeaveTeam_Click" Theme="Material" RenderMode="Danger"/>
@@ -70,7 +73,7 @@
                             </dx:GridViewDataColumn>
 
 
-                            <dx:GridViewCommandColumn Width="30%">
+                            <dx:GridViewCommandColumn Width="30%" Caption="Action">
                                 <HeaderStyle HorizontalAlign="Center" Font-Size="16px" />
                                 <CellStyle Border-BorderWidth="1px" Border-BorderColor="#000" />
                                 <CustomButtons>

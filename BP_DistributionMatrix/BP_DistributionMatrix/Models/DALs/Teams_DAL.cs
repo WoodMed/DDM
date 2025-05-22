@@ -123,11 +123,11 @@ public class Teams_Dal
 
     public List<TeamUser_Model> GetAllUsers(int userid)
     {
-        string query = @"SELECT 
-                            id, 
-                            CONCAT(firstname, ' ', lastname) AS name, 
-                            email 
-                        FROM ddm.Users_FL;";
+        string query = @"SELECT id, CONCAT(firstname, ' ', lastname) AS name, fl.email
+                        FROM ddm.Users_FL fl
+                        JOIN ddm.Users_PD pd On fl.email = pd.userEmail
+                        where fl.lockedstatus = 'Unlocked'
+                        order by name;";
 
         List<TeamUser_Model> res = new List<TeamUser_Model>();
 
@@ -210,11 +210,24 @@ public class Teams_Dal
         return res;
     }
 
-    public void CreateTeam(List<Tuple<int, string>> TeamMembers, string teamName)
+    public bool CreateTeam(List<Tuple<int, string>> TeamMembers, string teamName)
     {
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
             connection.Open();
+
+            string checkQuery = @"SELECT id FROM ddm.Teams WHERE team_name = @TeamName";
+            using (SqlCommand checkCmd = new SqlCommand(checkQuery, connection))
+            {
+                checkCmd.Parameters.AddWithValue("@TeamName", teamName);
+                object existingTeamId = checkCmd.ExecuteScalar();
+
+                if (existingTeamId != null)
+                {
+                    Debug.WriteLine("Team already exists. Exiting operation.");
+                    return false;
+                }
+            }
 
             string CreateQuery = @"INSERT INTO ddm.Teams (team_name, created_by, created_on)
                             SELECT @TeamName, @UserID, GETDATE()
@@ -240,8 +253,8 @@ public class Teams_Dal
                 cmd.Parameters.AddWithValue("@TeamId", newTeamId);
                 foreach (var member in TeamMembers)
                 {
-                    cmd.Parameters.Clear(); // Clears previous parameters
-                    cmd.Parameters.AddWithValue("@TeamId", newTeamId); // Re-add TeamId
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@TeamId", newTeamId);
                     cmd.Parameters.AddWithValue("@UserId", member.Item1);
                     cmd.Parameters.AddWithValue("@UserRole", member.Item2);
 
@@ -252,6 +265,7 @@ public class Teams_Dal
         }
 
         Debug.WriteLine("Team Created!");
+        return true;
     }
 
     public void UpdateTeam(int teamId, List<Tuple<int, string>> TeamMembers, string teamName)

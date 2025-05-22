@@ -2,7 +2,7 @@
 <siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0">
   <siteMapNode url="javascript:void(0);">
 	  <siteMapNode url="DistributionMatrix.aspx" title="Distribution Matrix"></siteMapNode>
-	  <siteMapNode url="teams.aspx" title="Manage Teams"></siteMapNode>
-	  <siteMapNode url="TeamsV2/List.aspx" title="Manage Teams V2"></siteMapNode>
+	  <siteMapNode url="TeamsV2/List.aspx" title="Manage Teams"></siteMapNode>
+	  <siteMapNode url="Report.aspx" title="Action Report"></siteMapNode>
   </siteMapNode>
 </siteMap>

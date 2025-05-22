@@ -24,16 +24,21 @@
 
                 <div class="main">
 
+                    <p style="margin-bottom: 3px;"><b>Leaders</b> can modify teams</p>
+                    <p style="margin-top: 3px;"><b>Members</b> can view but not modify a team</p>
+
                     <div class="main_component">
                         <dx:ASPxLabel ID="TeamLabel" runat="server" Text="Team Name: "
-                        Font-Size="18px" Font-Bold="true" />
+                        Font-Size="18px" Font-Bold="true" ForeColor="Black"/>
                     </div>
 
                     <div class="main_component">
-                        <dx:ASPxLabel ID="ASPxLabel1" runat="server" Text="Members"
-                        Font-Size="18px" Font-Bold="true" />
-                        <dx:ASPxButton CssClass="members_button" runat="server" Text="Leave Team" 
-                        AutoPostBack="false" OnClick="LeaveTeam_Click" Theme="Material" RenderMode="Danger"/>
+                        <div class="members">
+                            <dx:ASPxLabel ID="ASPxLabel1" runat="server" Text="Members"
+                            Font-Size="18px" Font-Bold="true" ForeColor="Black" />
+                            <dx:ASPxButton CssClass="members_button" runat="server" Text="Leave Team" 
+                            AutoPostBack="false" OnClick="LeaveTeam_Click" Theme="Material" RenderMode="Danger"/>
+                        </div>
                     </div>
 
                     <dx:ASPxGridView ID="TeamsGrid" runat="server" AutoGenerateColumns="False" KeyFieldName="Id"

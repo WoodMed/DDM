@@ -31,18 +31,11 @@ namespace BP_DistributionMatrix {
         {
             _dal = new Teams_Dal();
             // Get UserId
-            if (!IsPostBack)
-            {
-                Debug.WriteLine("hII"); 
-            }
             HttpCookie userIdCookie = HelperClass.GetCookie("session_userId");
             _userId = int.Parse(userIdCookie.Value);
             TeamErrorLabel.Visible = false;
-            if (!IsPostBack)
-            {
-            }
 
-            List<MemberData> _selectedUsers = new List<MemberData>();
+            _selectedUsers = new List<MemberData>();
 
             if (Session["TeamUsers"] != null)
             {
@@ -68,19 +61,6 @@ namespace BP_DistributionMatrix {
             listAvailableUsers.ValueField = "Id";
             listAvailableUsers.TextField = "PopupDisplay";
             listAvailableUsers.DataBind();
-
-            // Pre-select users that exist in the session
-            if (_selectedUsers != null)
-            {
-                foreach (ListEditItem item in listAvailableUsers.Items)
-                {
-                    int itemId = Convert.ToInt32(item.Value);
-                    if (_selectedUsers.Any(u => u.Id == itemId))
-                    {
-                        item.Selected = true; // Mark as selected
-                    }
-                }
-            }
         }
 
         protected void CreateTeamBtn_Click(object sender, EventArgs e)
@@ -89,6 +69,7 @@ namespace BP_DistributionMatrix {
             var test = TeamInput.Text;
             if (string.IsNullOrWhiteSpace(test))
             {
+                TeamErrorLabel.Text = "Please enter a value";
                 TeamErrorLabel.Visible = true;
                 return;
             }
@@ -98,14 +79,23 @@ namespace BP_DistributionMatrix {
                 new Tuple<int, string>(_userId, "Leader")
             };
 
-            _selectedUsers = (List<MemberData>)Session["TeamUsers"];
-
-            foreach (var member in _selectedUsers)
+            if (Session["TeamUsers"] != null)
             {
-                TeamMembers.Add(new Tuple<int, string>(member.Id, member.Role));
+                _selectedUsers = (List<MemberData>)Session["TeamUsers"];
+                foreach (var member in _selectedUsers)
+                {
+                    TeamMembers.Add(new Tuple<int, string>(member.Id, member.Role));
+                }
             }
 
-            _dal.CreateTeam(TeamMembers, TeamInput.Text);
+            bool created = _dal.CreateTeam(TeamMembers, TeamInput.Text);
+
+            if (!created)
+            {
+                TeamErrorLabel.Text = "Team name already taken, please type a new one";
+                TeamErrorLabel.Visible = true;
+                return;
+            }
 
             Debug.WriteLine("");
             Response.Redirect("~/TeamsV2/List.aspx");
@@ -127,6 +117,23 @@ namespace BP_DistributionMatrix {
                         Role = "Member"
                     });
                 }
+            }
+
+            // Little detour to ensure that roles are preserved
+            if (_selectedUsers != null)
+            {
+                var selectedUsersMap = _selectedUsers.ToDictionary(user => user.Id);
+
+                foreach (var user in teamUsersDataSource)
+                {
+                    if (!selectedUsersMap.ContainsKey(user.Id))
+                    {
+                        _selectedUsers.Add(user);
+                    }
+                }
+
+                _selectedUsers = _selectedUsers.Where(user => teamUsersDataSource.Any(tu => tu.Id == user.Id)).ToList();
+                teamUsersDataSource = new List<MemberData>(_selectedUsers);
             }
 
             Session["TeamUsers"] = teamUsersDataSource;

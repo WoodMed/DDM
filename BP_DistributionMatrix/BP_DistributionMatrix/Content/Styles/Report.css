@@ -23,6 +23,27 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
+.pane .docsearch{
+    display:flex;
+    flex-direction: row;
+}
+
+.pane .leftside {
+    display:flex;
+    flex-direction: column;
+}
+
+.pane .selectedinfo {
+    display: flex;
+    flex-direction:column;
+    margin-top:1rem;
+    padding: 0.8rem;
+    padding-bottom: 0.4rem;
+    background-color: #003366;
+    color: white;
+    border-radius: 8px;
+}
+
 .pane .databox {
     display: flex;
     flex-direction: column;
@@ -38,6 +59,8 @@
 }
 
 .pane .component {
+    display: flex;
+    flex-direction: column;
     margin:0.2rem;
 }
 

@@ -26,18 +26,20 @@ namespace BP_DistributionMatrix {
 
         }
 
-        protected void TeamsGrid_CommandButtonInitialize(object sender, ASPxGridViewCommandButtonEventArgs e)
+        protected void TeamsGrid_CommandButtonInitialize(object sender, ASPxGridViewCustomButtonEventArgs e)
         {
-            if (e.ButtonType == DevExpress.Web.ColumnCommandButtonType.Edit || e.ButtonType == DevExpress.Web.ColumnCommandButtonType.Delete)
+            if (e.ButtonID.ToString() == "Delete")
             {
                 string role = (string)TeamsGrid.GetRowValues(e.VisibleIndex, "Role");
 
                 // Hide Edit/Delete for specific roles (example: "Member" cannot edit or delete)
                 if (role == "Member")
                 {
-                    e.Visible = false;
+                    e.Enabled = false;
+                    e.Visible = DevExpress.Utils.DefaultBoolean.False;
                 }
             }
+            
         }
 
         protected void TeamsGrid_CustomButtonCallback(object sender, ASPxGridViewCustomButtonCallbackEventArgs e)
@@ -51,6 +53,16 @@ namespace BP_DistributionMatrix {
                 TeamsGrid.DataSource = _teams;
                 TeamsGrid.DataBind();
             }
+        }
+
+        protected void ConfirmDelete_Click(object sender, EventArgs e)
+        {
+            int teamId = Convert.ToInt32(hiddenTeamId.Value);
+            _dal.DeleteTeam(teamId);
+
+            _teams = _dal.GetAllTeams(_userId.ToString());
+            TeamsGrid.DataSource = _teams;
+            TeamsGrid.DataBind();
         }
 
     }

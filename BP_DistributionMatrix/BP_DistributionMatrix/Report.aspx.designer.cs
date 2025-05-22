@@ -11,8 +11,17 @@ namespace BP_DistributionMatrix
 {
 
 
-    public partial class RebeccaPage
+    public partial class Report
     {
+
+        /// <summary>
+        /// ErrorLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxLabel ErrorLabel;
 
         /// <summary>
         /// DocumentLabel control.
@@ -24,13 +33,40 @@ namespace BP_DistributionMatrix
         protected global::DevExpress.Web.ASPxLabel DocumentLabel;
 
         /// <summary>
-        /// TeamInput control.
+        /// DocumentInput control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxTextBox TeamInput;
+        protected global::DevExpress.Web.ASPxTextBox DocumentInput;
+
+        /// <summary>
+        /// CompanyLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxLabel CompanyLabel;
+
+        /// <summary>
+        /// DiscLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxLabel DiscLabel;
+
+        /// <summary>
+        /// DocLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DevExpress.Web.ASPxLabel DocLabel;
 
         /// <summary>
         /// ASPxLabel3 control.
@@ -42,13 +78,13 @@ namespace BP_DistributionMatrix
         protected global::DevExpress.Web.ASPxLabel ASPxLabel3;
 
         /// <summary>
-        /// ASPxListBox3 control.
+        /// ApproverBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxListBox ASPxListBox3;
+        protected global::DevExpress.Web.ASPxListBox ApproverBox;
 
         /// <summary>
         /// labelAvailableUsers control.
@@ -60,13 +96,13 @@ namespace BP_DistributionMatrix
         protected global::DevExpress.Web.ASPxLabel labelAvailableUsers;
 
         /// <summary>
-        /// listAvailableUsers control.
+        /// InformationBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxListBox listAvailableUsers;
+        protected global::DevExpress.Web.ASPxListBox InformationBox;
 
         /// <summary>
         /// ASPxLabel1 control.
@@ -78,12 +114,12 @@ namespace BP_DistributionMatrix
         protected global::DevExpress.Web.ASPxLabel ASPxLabel1;
 
         /// <summary>
-        /// ASPxListBox1 control.
+        /// ReviewBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxListBox ASPxListBox1;
+        protected global::DevExpress.Web.ASPxListBox ReviewBox;
     }
 }
