@@ -16,13 +16,14 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Diagnostics;
 using System.Web.Services;
+using DevExpress.XtraScheduler.Native;
 
 public partial class Root : MasterPage
 {
     public class Folder
     {
-        public string ParentId { get; set; }
         public string id { get; set; }
+        public string ParentId { get; set; }
         public string FolderName { get; set; }
     }
 
@@ -32,12 +33,8 @@ public partial class Root : MasterPage
 
     protected void Page_Init(object sender, EventArgs e)
     {
-
-        if (!IsPostBack)
-        {
-            string state = HelperClass.VerifySessionID();
-            _isAuthenticated = (state == "failure") ? false : true;
-        }
+        string state = HelperClass.VerifySessionID();
+        _isAuthenticated = (state == "failure") ? false : true;
     }
 
     protected void Page_Load(object sender, EventArgs e)
@@ -59,44 +56,19 @@ public partial class Root : MasterPage
 
         if (!IsPostBack)
         {
-
-            // Retrieve folder data
-            List<Companies_Model> companies = new List<Companies_Model>();
-            RelsDocsJoin_DAL dal = new RelsDocsJoin_DAL();
-            companies = dal.GetCompanies();
-
-            List<Folder> folderList = companies
-               .Select(f => new Folder
-               {
-                   ParentId = "",
-                   id = f.id.ToString(),
-                   FolderName = f.Company
-               })
-               .OrderBy(f => f.FolderName) // Sort alphabetically by FolderName
-               .ToList();
-
-            // Bind data to the ASPxTreeList
-            ASPxTreeList1.DataSource = folderList; // Your data source
-            ASPxTreeList1.KeyFieldName = "id";
-            ASPxTreeList1.ParentFieldName = "ParentId";
-
-            // Bind the data
-            ASPxTreeList1.DataBind();
-
-            Session["BoundData"] = ASPxTreeList1.DataSource;
+            BindTreeList();
         }
 
         else
         {
-
             ASPxTreeList1.DataSource = Session["BoundData"];
             ASPxTreeList1.DataBind();
-
         }
 
         LeftPanel.Visible = true;
         LeftPanelContent.Visible = true;
         LeftPanel.Collapsible = false;
+        ASPxTreeList1.HtmlDataCellPrepared += ASPxTreeList1_HtmlDataCellPrepared;
 
 
         string currentPath = Request.Url.LocalPath;
@@ -106,6 +78,8 @@ public partial class Root : MasterPage
             (string.IsNullOrEmpty(queryString) || queryString.Contains("status=NoData")))
         {
             LeftPanel.Collapsible = false;
+            ASPxTreeList1.Nodes[0].Expanded = true;
+            ASPxTreeList1.Nodes[1].Expanded = true;
         }
         else if (currentPath.StartsWith("/DistributionMatrix.aspx", StringComparison.OrdinalIgnoreCase)) {
             LeftPanel.Collapsible = true;
@@ -129,6 +103,79 @@ public partial class Root : MasterPage
             Session["CurrentDetails"] = null;
         }
 
+    }
+
+    protected void ASPxTreeList1_HtmlDataCellPrepared(object sender, TreeListHtmlDataCellEventArgs e)
+    {
+        if (e.Column.FieldName == "FolderName")
+        {
+            string folderName = e.CellValue.ToString();
+
+            if (folderName == "Suppliers" || folderName == "Contractors")
+            {
+                e.Cell.Font.Bold = true; // Apply bold style
+            }
+        }
+    }
+
+    protected void BindTreeList()
+    {
+        // Retrieve folder data
+        List<Companies_Model> companies = new List<Companies_Model>(); // Companies
+        List<Companies_Model> suppliers = new List<Companies_Model>(); // Suppliers
+
+        RelsDocsJoin_DAL dal = new RelsDocsJoin_DAL();
+        Supplier_DAL sup_dal = new Supplier_DAL();
+        companies = dal.GetCompanies();
+        suppliers = sup_dal.GetSuppliers();
+      
+
+        // Contractor
+        var contractorNode = new Folder
+        {
+            id = "0", 
+            ParentId = null, 
+            FolderName = "Contractors"
+        };
+
+        // Supplier
+        var vendorNode = new Folder
+        {
+            id = "1",
+            ParentId = null,
+            FolderName = "Suppliers"
+        };
+
+
+        // Order by alphabetical
+        List<Folder> folderList = companies
+           .Select(f => new Folder
+           {
+               ParentId = "0",
+               id = $"C-{f.id}",
+               FolderName = f.Company
+           })
+           .Concat(suppliers.Select(f => new Folder
+           {
+               ParentId = "1",
+               id = $"S-{f.id}",
+               FolderName = f.Company
+           }))
+           .OrderBy(f => f.FolderName)
+           .ToList();
+
+
+        // Add the root node to the list
+        folderList.Insert(0, contractorNode);
+        folderList.Insert(1, vendorNode);
+
+
+        ASPxTreeList1.DataSource = folderList;
+        ASPxTreeList1.KeyFieldName = "id";
+        ASPxTreeList1.ParentFieldName = "ParentId";
+        ASPxTreeList1.DataBind();
+
+        Session["BoundData"] = ASPxTreeList1.DataSource;
     }
 
     protected void Index_HtmlRowPrepared(object sender, DevExpress.Web.ASPxTreeList.TreeListHtmlRowEventArgs e)

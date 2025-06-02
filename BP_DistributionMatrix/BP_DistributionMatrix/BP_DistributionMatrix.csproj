@@ -329,6 +329,7 @@
     <Compile Include="GridView.aspx.designer.cs">
       <DependentUpon>GridView.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Models\DALs\Supplier_DAL.cs" />
     <Compile Include="Models\DALs\Reports_DAL.cs" />
     <Compile Include="Models\Report_Model.cs" />
     <Compile Include="Report.aspx.cs">

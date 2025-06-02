@@ -47,7 +47,7 @@ namespace BP_DistributionMatrix {
         {
             string number = DocumentInput.Text.Trim();
 
-            string pattern = @"^[A-Z0-9]+-[A-Z]+-[A-Z]+-\d+-[A-Z0-9]+(-\d+)*$";
+            string pattern = @"(^[A-Z0-9]+-)([A-Z]+)(-)([A-Z]+)(-)([A-Z0-9]+)";
             if (!Regex.IsMatch(number, pattern))
             {
                 ErrorLabel.Visible = true;

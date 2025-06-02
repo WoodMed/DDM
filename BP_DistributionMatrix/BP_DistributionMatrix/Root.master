@@ -24,9 +24,8 @@
             if (s.GetNodeState(e.nodeKey) == "Child") {
                 x = event.clientX;
                 y = event.clientY;
-                window.location.href = "DistributionMatrix.aspx?folderId=" + e.nodeKey;
+                window.location.replace("/DistributionMatrix.aspx?folderId=" + e.nodeKey);
             }
-
         }
 
         function showClientPopup() {
@@ -165,7 +164,7 @@
                     <dx:PanelContent>
                         <asp:ContentPlaceHolder runat="server" ID="LeftPanelContent"></asp:ContentPlaceHolder>
                             <dx:ASPxTreeList ID="ASPxTreeList1" ClientInstanceName="clientTL" runat="server" AutoGenerateColumns="False"
-                                KeyFieldName="FolderId"
+                                KeyFieldName="id"
                                 ParentFieldName="ParentId"
                                 Width="100%"
                                 Height="100%"
@@ -176,16 +175,15 @@
                                 <Columns>
                                     <dx:TreeListTextColumn FieldName="FolderName"
                                         AutoFilterCondition="Default"
-                                        ShowInFilterControl="Default"
                                         VisibleIndex="0"
-                                        Caption="Folder Name"
-                                        AllowHeaderFilter="True"
+                                        Caption="Spreadsheets"
                                         ReadOnly="True">
+                                        <HeaderStyle Font-Bold="True" Font-Size="14px" />
                                     </dx:TreeListTextColumn>
                                 </Columns>
 
                                 <SettingsBehavior AllowFocusedNode="True" ExpandCollapseAction="NodeClick" ExpandNodesOnFiltering="true"></SettingsBehavior>
-                                <ClientSideEvents NodeClick="treeList_NodeClick" />
+                                <ClientSideEvents NodeClick="treeList_NodeClick" Init="OnInit" />
                                 <SettingsDataSecurity AllowEdit="False" AllowInsert="False" AllowDelete="False"></SettingsDataSecurity>
 
                             </dx:ASPxTreeList>

@@ -35,6 +35,7 @@
                         <Header BackColor="#336699" ForeColor="white" Font-Bold="true" Font-Size="14px" />
                         <Header Border-BorderWidth="1px" Border-BorderColor="#000" />
                         <Cell Border-BorderWidth="1px" Border-BorderColor="#000" />
+                        <Table Border-BorderWidth="1px" Border-BorderColor="#000"  /> 
                 </Styles>
                 <Columns>
 

@@ -35,11 +35,14 @@ public partial class technip : System.Web.UI.Page
     private int _columnToUnlock = 5; // ctrl f worksheet.Unprotect("") on change update accordingly there
     private int _headerRow = 1;
     private int _userId;
+    private string _spreadsheetType;
+    private int _spreadsheetId;
     private List<Tuple<int, string>> _userTeams;
     private List<Tuple<int, string>> _teamMembers;
     private Dictionary<string, string> _actionMap;
     List<RelsDocsJoin_Model> _spreadsheetData;
     RelsDocsJoin_DAL _dal;
+    Supplier_DAL _sup_dal;
     string _companyId;
     int _CurrentTeamId;
     string _CurrentTeamName;
@@ -60,7 +63,15 @@ public partial class technip : System.Web.UI.Page
         _teamStartIndex = 10;
         // Check if theres no folderid to hide buttons and dont open spreadsheet
         _companyId = Request.QueryString["folderId"];
-        if (_companyId != null) Session["folderId"] = int.Parse(_companyId);
+        if (_companyId != null)
+        {
+            var split = _companyId.Split('-');
+            if (split[0] == "C") _spreadsheetType = "Contractors";
+            else _spreadsheetType = "Suppliers";
+            _spreadsheetId = int.Parse(split[1]);
+            Session["folderId"] = int.Parse(split[1]);
+
+        }
         if (_companyId == null)
         {
             ToggleVisible(false);
@@ -69,9 +80,10 @@ public partial class technip : System.Web.UI.Page
 
         // Initialise Dal
         _dal = new RelsDocsJoin_DAL();
+        _sup_dal = new Supplier_DAL();
 
         // Verify FolderId
-        if (!_dal.CheckCompanyId(int.Parse(_companyId))) Response.Redirect("/DistributionMatrix.aspx?status=NoData");
+        if (!_dal.CheckCompanyId(_spreadsheetId) ) Response.Redirect("/DistributionMatrix.aspx?status=NoData");
 
         // Get UserId
         HttpContext context = HttpContext.Current;
@@ -114,7 +126,7 @@ public partial class technip : System.Web.UI.Page
         {
 
             // Retrieve Data and Populate
-            Prepare_SpreadsheetV2(_companyId);
+            Prepare_SpreadsheetV2(_spreadsheetId.ToString());
             PrepareComboBox();
             PopulateSpreadsheet();
         }
@@ -124,10 +136,20 @@ public partial class technip : System.Web.UI.Page
 
     protected void PopulateSpreadsheet()
     {
+        
         Spreadsheet.Document.BeginUpdate();
 
-        _spreadsheetData = _dal.GetAllRows(_userId, _companyId);
-        _actionMap = _dal.GetTeamActions(_teamMembers, _companyId);
+        if(_spreadsheetType == "Contractors")
+        {
+            _spreadsheetData = _dal.GetAllRows(_userId, _spreadsheetId.ToString());
+            _actionMap = _dal.GetTeamActions(_teamMembers, _spreadsheetId.ToString());
+        }
+        else if(_spreadsheetType == "Suppliers")
+        {
+            _spreadsheetData = _sup_dal.GetAllRows(_userId, _spreadsheetId.ToString());
+            _actionMap = _sup_dal.GetTeamActions(_teamMembers, _spreadsheetId.ToString());
+        }
+
         // Populate Spreadsheet
         int RowIndex = _headerRow + 1;
         int ColumnOffset = 3;
@@ -137,7 +159,7 @@ public partial class technip : System.Web.UI.Page
         {
             var rowRange = _worksheet.Range.FromLTRB(0, RowIndex, 8 + _teamMembers.Count(), RowIndex);
 
-            
+     
             // If row was saved previously make it blue
             if (_previousSaves != null && _previousSaves.Contains( int.Parse(row.doc_type_disc_id) ))
             {
@@ -183,8 +205,26 @@ public partial class technip : System.Web.UI.Page
             RowIndex++;
         }
 
+        // Delete all unused rows formatting after last row of data
+        RowIndex--;
+        int totalRows = _worksheet.GetUsedRange().BottomRowIndex + 1;
+        if (RowIndex < totalRows - 1)
+        {
+            _worksheet.Rows.Remove(RowIndex + 1, totalRows - RowIndex - 1);
+        }
+
         // Populate the total IRA Count
-        List<int> IRACount = _dal.GetTotalIRACount(_companyId);
+
+        List<int> IRACount = new List<int>();
+        if(_spreadsheetType == "Contractors")
+        {
+            IRACount = _dal.GetTotalIRACount(_spreadsheetId.ToString());
+        }
+        else if(_spreadsheetType == "Suppliers")
+        {
+            IRACount = _sup_dal.GetTotalIRACount(_spreadsheetId.ToString());
+        }
+
         _worksheet.Cells["B2"].Value = IRACount[0];
         _worksheet.Cells["C2"].Value = IRACount[1];
         _worksheet.Cells["D2"].Value = IRACount[2];
@@ -217,7 +257,13 @@ public partial class technip : System.Web.UI.Page
         Spreadsheet.ConfirmOnLosingChanges = "false";
         Spreadsheet.ShowConfirmOnLosingChanges = false;
 
-        _filepath = Server.MapPath("~/App_Data/Excel/SpreadsheetTemplate.xlsx");
+        // Select relevant EXCEL template to open
+        if(_spreadsheetType == "Contractors") 
+            _filepath = Server.MapPath("~/App_Data/Excel/ContractorTemplate.xlsx");
+        else if(_spreadsheetType == "Suppliers")
+            _filepath = Server.MapPath("~/App_Data/Excel/SupplierTemplate.xlsx");
+
+
         Spreadsheet.Open(_filepath);
         Spreadsheet.Document.LoadDocument(_filepath);
         _worksheet = Spreadsheet.Document.Worksheets[0];
@@ -281,6 +327,7 @@ public partial class technip : System.Web.UI.Page
         StatusLabel.Visible = !visibility;
     }
 
+    // SAVE ACTION
     protected void Data_Callback(object sender, DevExpress.Web.CallbackEventArgsBase e)
     {
         try
@@ -305,7 +352,7 @@ public partial class technip : System.Web.UI.Page
                 UserRels_Model rels = new UserRels_Model()
                 {
                     doc_type_disc_id = docid,
-                    company_id = int.Parse(_companyId),
+                    company_id = _spreadsheetId,
                     user_id = _userId,
                     value = _worksheet.Cells[row, 8].Value.ToString(),
                 };
@@ -318,7 +365,7 @@ public partial class technip : System.Web.UI.Page
                     UserRels_Model team_rels = new UserRels_Model()
                     {
                         doc_type_disc_id = int.Parse(_worksheet.Cells[row, 0].Value.ToString()),
-                        company_id = int.Parse(_companyId),
+                        company_id = _spreadsheetId,
                         user_id = _teamMembers[i].Item1,
                         value = _worksheet.Cells[row, _teamStartIndex+i].Value.ToString(),
                     };
@@ -330,8 +377,14 @@ public partial class technip : System.Web.UI.Page
             }
 
             Debug.WriteLine("");
-            _dal.SaveActions(ActionsToSave);
-            Prepare_SpreadsheetV2(_companyId);
+            // Spreadsheet type save
+            if (_spreadsheetType == "Contractors")
+                _dal.SaveActions(ActionsToSave);
+            else if (_spreadsheetType == "Suppliers")
+                _sup_dal.SaveActions(ActionsToSave);
+
+            // Refresh the spreadsheet
+            Prepare_SpreadsheetV2(_spreadsheetId.ToString());
             PopulateSpreadsheet();
         }
 
