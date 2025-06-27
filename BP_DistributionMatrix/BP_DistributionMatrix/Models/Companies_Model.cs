@@ -8,6 +8,6 @@ using System.Web;
 /// </summary>
 public class Companies_Model
 {
-    public int id { get; set; }
+    public int Id { get; set; }
     public string Company { get; set; }
 }

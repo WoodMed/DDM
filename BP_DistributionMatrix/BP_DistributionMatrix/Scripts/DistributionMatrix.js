@@ -2,22 +2,11 @@
 window.onload = function () {
     var folderId = new URLSearchParams(window.location.search).get("folderId");
     console.log(folderId);
-    if (folderId !== null) {
-        document.getElementById("PageContent_StatusLabel").style.display = "none";
-    } else { document.getElementById("PageContent_StatusLabel").style.display = "flex"; }
-    clientSpreadSheet.SetModified(false); // Prevents spreadsheet from thinking there are changes
 };
 
-clientSpreadSheet.BeginUpdate();
-
-clientSpreadSheet.CellValueChanged.AddHandler(function (s, e) {
-    console.log("Cell changed:", e.cell.columnIndex, e.cell.rowIndex, e.cell.value);
-});
 function onCellValueChanged(s, e) {
     console.log("JAVASCRIPT CELL CHANGE");
 }
-
-clientSpreadSheet.EndUpdate();
 
 // Save the spreadsheet to the db by posting to backend
 function clickSaveAs(s, e) {
@@ -87,4 +76,16 @@ function onTeamSelected(s, e) {
 
     // Redirect to the updated URL
     window.location.href = newUrl;
+}
+
+function OnIndexChange(s, e) {
+    var selectedListBox = ASPxClientControl.GetControlCollection().GetByName("listSelectedUsers");
+    selectedListBox.ClearItems(); // Clear previous selections
+
+    // Loop through all items in the main list box
+    for (var i = 0; i < s.GetItemCount(); i++) {
+        if (s.GetItem(i).selected) { // Check if item is selected
+            selectedListBox.AddItem(s.GetItem(i).text, s.GetItem(i).value); // Add to second list box
+        }
+    }
 }

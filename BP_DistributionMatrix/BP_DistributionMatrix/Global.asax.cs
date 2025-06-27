@@ -44,7 +44,7 @@ namespace BP_DistributionMatrix {
             }
             else
             {
-                // Validation to allow only "I", "A", or "R"
+                // Validation to allow only "I", "A", or "R" under all of the actions columns
                 string newValue = curCell.Value.ToString().ToUpper();
                 if (newValue == "I" || newValue == "A" || newValue == "R" || newValue == "")
                 {

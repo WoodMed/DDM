@@ -62,6 +62,7 @@ public partial class SignInModule : System.Web.UI.Page {
             Debug.WriteLine("Sending Command to Fusion Live API...");
             string emailResult = HelperClass.ExecuteCommandResponse(command, "users");
 
+            // Process response and stores the email and user ID in variables
             Debug.WriteLine("Email received: " + emailResult);
             XmlDocument emailResponse = new XmlDocument();
             emailResponse.LoadXml(emailResult);
@@ -75,10 +76,8 @@ public partial class SignInModule : System.Web.UI.Page {
                 userid = emailNode.Attributes["id"].Value;
             }
 
-            // retrieveUserFromDB(username, email);
 
-            // Cookie Creation
-
+            // Cookies Creation
             HttpCookie sessionCookie = new HttpCookie("session_id", sessionID);
             sessionCookie.Expires = DateTime.Now.AddHours(HelperClass.CookieExpiryTime);
             Response.Cookies.Add(sessionCookie);

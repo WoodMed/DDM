@@ -12,5 +12,8 @@ public class UserRels_Model
     public int company_id { get; set; }
     public int user_id { get; set; }
     public string value { get; set; }
+    public string username { get; set; }
+
+    public string contractor { get; set; }
 
 }

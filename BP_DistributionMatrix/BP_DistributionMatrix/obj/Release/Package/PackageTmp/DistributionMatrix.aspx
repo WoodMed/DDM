@@ -53,6 +53,18 @@
             </dx:ASPxButton>
         </div>
 
+        
+        <div class="menu_button">
+            <dx:ASPxButton ID="Export_Btn" runat="server" Text="Export Actions"
+                AutoPostBack="False" CssClass="menu_button_style"
+                EnableClientSideAPI="True"
+                Theme="Material"
+                RenderMode="Secondary"
+                OnClick="Export_Btn_Click"
+                Visible="false">
+            </dx:ASPxButton>
+        </div>
+
     </div>
 
     <div>

@@ -49,6 +49,24 @@ public partial class technip
     protected global::DevExpress.Web.ASPxButton Discard_Btn;
 
     /// <summary>
+    /// ExportCallback control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::DevExpress.Web.ASPxCallback ExportCallback;
+
+    /// <summary>
+    /// Export_Btn control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::DevExpress.Web.ASPxButton Export_Btn;
+
+    /// <summary>
     /// CallbackPanel control.
     /// </summary>
     /// <remarks>
@@ -65,4 +83,67 @@ public partial class technip
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::DevExpress.Web.ASPxSpreadsheet.ASPxSpreadsheet Spreadsheet;
+
+    /// <summary>
+    /// ExportChoicePanel control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::DevExpress.Web.ASPxPopupControl ExportChoicePanel;
+
+    /// <summary>
+    /// ContractorList control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::DevExpress.Web.ASPxListBox ContractorList;
+
+    /// <summary>
+    /// SupplierList control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::DevExpress.Web.ASPxListBox SupplierList;
+
+    /// <summary>
+    /// btnAddSelectedMembers control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::DevExpress.Web.ASPxButton btnAddSelectedMembers;
+
+    /// <summary>
+    /// popupAddMembers control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::DevExpress.Web.ASPxPopupControl popupAddMembers;
+
+    /// <summary>
+    /// hfContractors control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.HiddenField hfContractors;
+
+    /// <summary>
+    /// hfSuppliers control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.HiddenField hfSuppliers;
 }

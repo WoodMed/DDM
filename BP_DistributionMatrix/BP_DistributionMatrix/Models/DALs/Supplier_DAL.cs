@@ -16,7 +16,7 @@ public class Supplier_DAL
         _connectionString = WebConfigurationManager.ConnectionStrings["csHCCUKDDM"].ConnectionString;
     }
 
-    public List<Companies_Model> GetSuppliers() {
+    public List<Companies_Model> GetAllSuppliers() {
         string query = @"SELECT [id]
                               ,[Name]
                           FROM ddm.Suppliers
@@ -36,7 +36,7 @@ public class Supplier_DAL
                     {
                         Companies_Model company = new Companies_Model
                         {
-                            id = int.Parse(reader["id"].ToString()),
+                            Id = int.Parse(reader["id"].ToString()),
                             Company = reader["Name"].ToString(),
                         };
 
@@ -137,7 +137,7 @@ public class Supplier_DAL
                     {
                         company = new Companies_Model
                         {
-                            id = int.Parse(reader["id"].ToString()),
+                            Id = int.Parse(reader["id"].ToString()),
                             Company = reader["Company"].ToString(),
                         };
 

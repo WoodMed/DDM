@@ -127,7 +127,7 @@ public partial class Root : MasterPage
         RelsDocsJoin_DAL dal = new RelsDocsJoin_DAL();
         Supplier_DAL sup_dal = new Supplier_DAL();
         companies = dal.GetCompanies();
-        suppliers = sup_dal.GetSuppliers();
+        suppliers = sup_dal.GetAllSuppliers();
       
 
         // Contractor
@@ -152,13 +152,13 @@ public partial class Root : MasterPage
            .Select(f => new Folder
            {
                ParentId = "0",
-               id = $"C-{f.id}",
+               id = $"C-{f.Id}",
                FolderName = f.Company
            })
            .Concat(suppliers.Select(f => new Folder
            {
                ParentId = "1",
-               id = $"S-{f.id}",
+               id = $"S-{f.Id}",
                FolderName = f.Company
            }))
            .OrderBy(f => f.FolderName)

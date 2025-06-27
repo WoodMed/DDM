@@ -61,7 +61,7 @@ namespace BP_DistributionMatrix {
             string doc_code = parts[2];
             string contractor_code = parts[3];
 
-            _report = _dal.GetReportActions(disc_code, doc_code, contractor_code);
+            /* List<Report_Models> */ _report = _dal.GetReportActions(disc_code, doc_code, contractor_code);
             List<string> details = _dal.GetReportDetails(disc_code, doc_code, contractor_code);
 
             if (_report == null || !_report.Any() || details == null || !details.Any())

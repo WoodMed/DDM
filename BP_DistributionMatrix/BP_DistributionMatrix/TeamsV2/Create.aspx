@@ -120,7 +120,6 @@
                                     <ClientSideEvents SelectedIndexChanged="OnIndexChange" />
                                 </dx:ASPxListBox>
 
-
                                 <div id="selectedUsersPanel" style="width: 100%; padding-left: 10px; border-left: 1px solid #ccc;">
                                     <dx:ASPxListBox 
                                         ID="listSelectedUsers" 

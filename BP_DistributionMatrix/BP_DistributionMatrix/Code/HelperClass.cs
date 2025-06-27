@@ -28,6 +28,9 @@ public static class HelperClass
     }
 
     public static int CookieExpiryTime = 24;
+
+    // This verifies the current session ID stored in the session cookie.
+    // It will check 3 times on failure to avoid false negatives. This method is called on every page load to ensure the session is valid.
     public static string VerifySessionID()
     {
         string state = "failure";
@@ -98,6 +101,8 @@ public static class HelperClass
 
     }
 
+    // Executre a fustion live command. This is used to send commands to the Fusion Live API and get a response back.
+    // Just pass in the same command you would on the browser api in "command" and the category of the command (e.g. "folders", "users", etc.)
     public static string ExecuteCommandResponse(string command, string category)
     {
         string result = "";
@@ -147,6 +152,7 @@ public static class HelperClass
         return result;
     }
 
+    // Clears all cookies in the browser
     public static void ClearAllCookies(HttpContext context)
     {
         foreach (string cookieName in context.Request.Cookies.AllKeys)
@@ -163,6 +169,7 @@ public static class HelperClass
 
     }
 
+    // Safely retrieves a cookie from the browser.
     public static HttpCookie GetCookie(string cookieName)
     {
         HttpContext context = HttpContext.Current;
@@ -177,6 +184,7 @@ public static class HelperClass
         return res;
     }
 
+    // Retrieves the session ID from the session cookie and sets the session as authenticated.
     public static string GetSessionID()
     {
         HttpContext context = HttpContext.Current;
@@ -194,6 +202,8 @@ public static class HelperClass
         return sessionID;
     }
 
+    // Legacy code from previous implementation to retrieve documents directly from Fusion live,
+    // these methods aren't actively used anymore as we now retrieve data from the Users_PD table but they still work.
     public static List<string[]> Get_Directories()
     {
         Debug.WriteLine("Getting Directories...");
@@ -567,10 +577,5 @@ public static class HelperClass
         }
     }
 
-    // TODO: Complete get method
-    public static void Get_Data()
-    {
-        return;
-    }
 
 }

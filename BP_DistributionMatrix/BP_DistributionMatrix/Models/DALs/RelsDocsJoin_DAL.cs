@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DevExpress.XtraRichEdit.Import.Html;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Data.SqlClient;
@@ -36,7 +37,7 @@ public class RelsDocsJoin_DAL
                     {
                         Companies_Model company = new Companies_Model
                         {
-                            id = int.Parse(reader["id"].ToString()),
+                            Id = int.Parse(reader["id"].ToString()),
                             Company = reader["Company"].ToString(),
                         };
 
@@ -114,6 +115,44 @@ public class RelsDocsJoin_DAL
 
     }
 
+    public List<Companies_Model> GetAllCompanies(string folderId)
+    {
+        string query = @"SELECT [id]
+                              ,[Company]
+                          FROM ddm.Companies";
+
+        List<Companies_Model> companies = new List<Companies_Model>();
+
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            using (SqlCommand cmd = new SqlCommand(query, connection))
+            {
+
+                cmd.Parameters.AddWithValue("@FolderId", folderId);
+                connection.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+
+                        Companies_Model company = new Companies_Model
+                        {
+                            Id = int.Parse(reader["id"].ToString()),
+                            Company = reader["Company"].ToString(),
+                        };
+
+                        companies.Add(company);
+
+                    }
+                }
+
+            }
+        }
+
+        return companies;
+
+    }
     public Companies_Model GetCompany(string folderId)
     {
         string query = @"SELECT [id]
@@ -137,7 +176,7 @@ public class RelsDocsJoin_DAL
                     {
                         company = new Companies_Model
                         {
-                            id = int.Parse(reader["id"].ToString()),
+                            Id = int.Parse(reader["id"].ToString()),
                             Company = reader["Company"].ToString(),
                         };
 
@@ -476,24 +515,53 @@ GROUP BY
         return res;
     }
 
-    public void SaveActions(List<UserRels_Model> rows)
+    public void SaveActions(List<UserRels_Model> rows, int userid)
     {
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
             connection.Open();
 
-            foreach (UserRels_Model row in rows)
-            {
-                string query = @"MERGE INTO ddm.User_Rels AS target
-                                USING (SELECT @DocTypeDiscId AS doc_type_disc_id, @UserId AS user_id, @CompanyID AS company_id, @Value AS value) AS source
+            string query = @"MERGE INTO ddm.User_Rels AS target
+                                USING (SELECT @DocTypeDiscId AS doc_type_disc_id, 
+                                  @UserId AS user_id, 
+                                  @CompanyID AS company_id, 
+                                  @Value AS value, 
+                                  @UserChangedId AS User_Modified, 
+                                  GETDATE() AS LastModified) AS source
+
                                 ON target.doc_type_disc_id = source.doc_type_disc_id
                                 AND target.user_id = source.user_id
                                 AND target.company_id = source.company_id
                                 WHEN MATCHED THEN
-                                    UPDATE SET value = source.value
+                                    UPDATE SET value = source.value, 
+                                               User_Modified = source.User_Modified, 
+                                               LastModified = source.LastModified
                                 WHEN NOT MATCHED THEN
-                                    INSERT (doc_type_disc_id, user_id, company_id, value)
-                                    VALUES (source.doc_type_disc_id, source.user_id, source.company_id, source.value);";
+                                    INSERT (doc_type_disc_id, user_id, company_id, value, User_Modified, LastModified) 
+                                    VALUES (source.doc_type_disc_id, source.user_id, source.company_id, source.value, source.User_Modified, source.LastModified);";
+
+            string auditQuery = @"INSERT INTO ddm.SaveAction_Audit
+                                        (
+                                            [User_ID], 
+                                            [Username], 
+                                            [Doc_ID], 
+                                            [Action], 
+                                            [Date_Modified],
+                                            [Contractor]
+                                        )
+                                        VALUES 
+                                        (
+                                            @User_ID, 
+                                            @Username, 
+                                            @Doc_ID, 
+                                            @Action, 
+                                            GETDATE(),
+                                            @Contractor
+
+                                        );";
+
+            foreach (UserRels_Model row in rows)
+            {
 
                 using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
@@ -501,12 +569,48 @@ GROUP BY
                     cmd.Parameters.AddWithValue("@CompanyID", row.company_id);
                     cmd.Parameters.AddWithValue("@UserId", row.user_id);
                     cmd.Parameters.AddWithValue("@Value", row.value ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@UserChangedId", userid);
 
-                    cmd.ExecuteNonQuery(); 
+                    cmd.ExecuteNonQuery();
+                    Console.WriteLine(cmd.CommandText);
                 }
+
+                using (SqlCommand auditCmd = new SqlCommand(auditQuery, connection))
+                {
+                    auditCmd.Parameters.AddWithValue("@User_ID", row.user_id);
+                    auditCmd.Parameters.AddWithValue("@Username", row.username);
+                    auditCmd.Parameters.AddWithValue("@Doc_ID", row.doc_type_disc_id);
+                    auditCmd.Parameters.AddWithValue("@Action", row.value);
+                    auditCmd.Parameters.AddWithValue("@Contractor", row.contractor);
+
+                    auditCmd.ExecuteNonQuery();
+                    Console.WriteLine("Audit entry inserted successfully.");
+                }
+
             }
         }
 
         Debug.WriteLine("Save Attempt Complete");
+    }
+
+    public bool CheckAdmin(int userid)
+    {
+        string query = @"SELECT 1 FROM ddm.UserRoles WHERE User_ID = @UserID;";
+
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+
+            using (SqlCommand cmd = new SqlCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@UserID", userid);
+
+                var result = cmd.ExecuteScalar(); // Retrieves the first column of the first row
+
+                return result != null;
+            }
+        }
+
+
     }
 }

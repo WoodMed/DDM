@@ -35,8 +35,10 @@ namespace BP_DistributionMatrix {
             _userId = int.Parse(userIdCookie.Value);
             TeamErrorLabel.Visible = false;
 
+
             _selectedUsers = new List<MemberData>();
 
+            // Get selected users from Session ID if it exists
             if (Session["TeamUsers"] != null)
             {
                 _selectedUsers = (List<MemberData>)Session["TeamUsers"];
@@ -44,12 +46,13 @@ namespace BP_DistributionMatrix {
                 TeamsGrid.DataBind();
             }
 
-            // bind popup
+            // bind add members popup
             BindAvailableUsers();
-
-
         }
 
+
+
+        // Bind available users to addmembers list box popup
         private void BindAvailableUsers()
         {
 
@@ -61,11 +64,14 @@ namespace BP_DistributionMatrix {
             listAvailableUsers.ValueField = "Id";
             listAvailableUsers.TextField = "PopupDisplay";
             listAvailableUsers.DataBind();
+
         }
 
+        // Finalise team creation
         protected void CreateTeamBtn_Click(object sender, EventArgs e)
         {
 
+            // First check if we have a team name
             var test = TeamInput.Text;
             if (string.IsNullOrWhiteSpace(test))
             {
@@ -74,11 +80,13 @@ namespace BP_DistributionMatrix {
                 return;
             }
 
+            // Add the current user as the team leader
             List<Tuple<int, string>> TeamMembers = new List<Tuple<int, string>>
             {
                 new Tuple<int, string>(_userId, "Leader")
             };
 
+            // Add all selected users to the team members list
             if (Session["TeamUsers"] != null)
             {
                 _selectedUsers = (List<MemberData>)Session["TeamUsers"];
@@ -88,6 +96,7 @@ namespace BP_DistributionMatrix {
                 }
             }
 
+            // We attempt to create the team, return false on fail
             bool created = _dal.CreateTeam(TeamMembers, TeamInput.Text);
 
             if (!created)
@@ -97,15 +106,17 @@ namespace BP_DistributionMatrix {
                 return;
             }
 
-            Debug.WriteLine("");
+            // redirect back to the teams list page
             Response.Redirect("~/TeamsV2/List.aspx");
         }
 
+        // Add selected members from the popup listbox into the main gridview
         protected void btnAddSelectedMembers_Click(object sender, EventArgs e)
         {
 
             List<MemberData> teamUsersDataSource = new List<MemberData>();
 
+            // Retrieve all selected users from the popup list box
             foreach (ListEditItem item in listAvailableUsers.Items)
             {
                 if (item.Selected)
@@ -136,6 +147,7 @@ namespace BP_DistributionMatrix {
                 teamUsersDataSource = new List<MemberData>(_selectedUsers);
             }
 
+            // Bind the data to the main grid view
             Session["TeamUsers"] = teamUsersDataSource;
             TeamsGrid.DataSource = teamUsersDataSource;
             TeamsGrid.DataBind();
@@ -143,9 +155,10 @@ namespace BP_DistributionMatrix {
             popupAddMembers.ShowOnPageLoad = false;
         }
 
-
+        // Callback method for main grid view custom buttons
         protected void gridTeamMembers_CustomButtonCallback(object sender, ASPxGridViewCustomButtonCallbackEventArgs e)
         {
+            // Remove a member from the team
             if (e.ButtonID == "Remove")
             {
                 List<MemberData> teamUsersDataSource = (List<MemberData>)Session["TeamUsers"];
@@ -164,7 +177,7 @@ namespace BP_DistributionMatrix {
                 }
             }
 
-
+            // Promote a member Member to Leader or vice versa
             if (e.ButtonID == "Promote")
             {
                 // Retrieve the session data
@@ -197,6 +210,7 @@ namespace BP_DistributionMatrix {
             }
         }
 
+        // Unused
         protected void gridTeamMembers_CustomButtonInitialize(object sender, ASPxGridViewCustomButtonEventArgs e)
         {
             if (e.ButtonID == "Promote")
@@ -212,8 +226,5 @@ namespace BP_DistributionMatrix {
             }
         }
 
-        protected void callbackPanel_Callback(object sender, CallbackEventArgsBase e)
-        {
-        }
     }
 }

@@ -20,12 +20,14 @@ namespace BP_DistributionMatrix {
             HttpCookie userIdCookie = HelperClass.GetCookie("session_userId");
             _userId = int.Parse(userIdCookie.Value);
 
+            // Retrieve all the teams the user is a part of
             _teams = _dal.GetAllTeams( _userId.ToString() );
             TeamsGrid.DataSource = _teams;
             TeamsGrid.DataBind();
 
         }
 
+        // Custom buttons in main grid
         protected void TeamsGrid_CommandButtonInitialize(object sender, ASPxGridViewCustomButtonEventArgs e)
         {
             if (e.ButtonID.ToString() == "Delete")
@@ -42,6 +44,7 @@ namespace BP_DistributionMatrix {
             
         }
 
+        // Custom buttons in main grid
         protected void TeamsGrid_CustomButtonCallback(object sender, ASPxGridViewCustomButtonCallbackEventArgs e)
         {
             if (e.ButtonID == "Delete")
@@ -55,6 +58,7 @@ namespace BP_DistributionMatrix {
             }
         }
 
+        // Delete the entire team if user clicks delete
         protected void ConfirmDelete_Click(object sender, EventArgs e)
         {
             int teamId = Convert.ToInt32(hiddenTeamId.Value);

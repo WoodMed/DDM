@@ -53,6 +53,31 @@
             </dx:ASPxButton>
         </div>
 
+        <dx:ASPxCallback ID="ExportCallback" runat="server" ClientInstanceName="exportCallback"
+            OnCallback="Export_Btn_Click">
+            <ClientSideEvents EndCallback="function(s, e) {
+                console.log('Export complete');
+                exportPopup.Hide();
+                document.getElementById('downloadFrame').src = '/DownloadExcel.ashx';
+
+                console.log('Ashx opened');
+
+
+            }" />
+        </dx:ASPxCallback>
+
+        <div class="menu_button">
+            <dx:ASPxButton ID="Export_Btn" runat="server" Text="Export Actions"
+                AutoPostBack="False" CssClass="menu_button_style"
+                EnableClientSideAPI="True"
+                Theme="Material"
+                RenderMode="Secondary">
+                <ClientSideEvents Click="function(s, e) {
+                    exportChoicePopup.Show();
+                }" />
+            </dx:ASPxButton>
+        </div>
+
     </div>
 
     <div>
@@ -73,11 +98,100 @@
 
     </div>
 
-    <!-- 
-                    <RibbonTabs>
-                            <dx:RibbonTab Text="Commands">
-                            </dx:RibbonTab>
-                    </RibbonTabs>
--->
+           <!-- EXPORT COMPANY CHOICE PANEL -->
+         <dx:ASPxPopupControl 
+             ID="ExportChoicePanel"
+             runat="server" 
+             ClientInstanceName="exportChoicePopup"
+             PopupHorizontalAlign="WindowCenter"
+             PopupVerticalAlign="WindowCenter"
+             ShowCloseButton="true"
+             Modal="true"
+             AllowResize="true"
+             Width="700px"
+             HeaderText="Export Actions"
+             CloseAction="CloseButton"
+             PopupAnimationType="Fade"
+             EnableClientSideAPI="true"
+             EnableCallbackMode="false">
+
+             <ContentCollection>
+                 <dx:PopupControlContentControl>
+                     <div style="display: flex;">
+
+                            <!-- User Selection List -->
+                            <dx:ASPxListBox ID="ContractorList" runat="server" Width="500px" Height="300px" SelectionMode="CheckColumn" ClientInstanceName="contractorList" Caption="Contractors" CaptionSettings-Position="Top" CaptionSettings-Font-Bold="true" EnableCallbackMode="false">
+                            </dx:ASPxListBox>
+
+                            <dx:ASPxListBox ID="SupplierList" runat="server" Width="500px" Height="300px" SelectionMode="CheckColumn" ClientInstanceName="supplierList" style="margin-left: 20px;" Caption="Suppliers" CaptionSettings-Position="Top" CaptionSettings-Font-Bold="true">
+                             </dx:ASPxListBox>
+
+                     </div>
+
+                     <br />
+
+                     <div style="display: flex; justify-content: center; align-items: center;">
+                            <dx:ASPxButton
+                             ID="btnAddSelectedMembers"
+                             runat="server"
+                             Text="Export Actions"
+                             AutoPostBack="false">
+                            <ClientSideEvents Click="function(s, e) {
+                                var contractorItems = contractorList.GetSelectedItems();
+                                var supplierItems = supplierList.GetSelectedItems();
+
+                                var contractorData = Array.prototype.map.call(contractorItems, function(item) {
+                                    return item.value + '|' + item.text;
+                                });
+
+                                var supplierData = Array.prototype.map.call(supplierItems, function(item) {
+                                    return item.value + '|' + item.text;
+                                });
+
+                                document.getElementById('hfContractors').value = contractorData.join(',');
+                                document.getElementById('hfSuppliers').value = supplierData.join(',');
+
+                                exportCallback.PerformCallback();
+                                exportChoicePopup.Hide();
+                                exportPopup.Show();
+                            }" />
+                            </dx:ASPxButton>
+                     </div>
+
+
+                 </dx:PopupControlContentControl>
+             </ContentCollection>
+         </dx:ASPxPopupControl>
+
+    <!-- EXPORT LOADING PANEL -->
+    <dx:ASPxPopupControl 
+    ID="popupAddMembers" 
+    runat="server" 
+    ClientInstanceName="exportPopup"
+    PopupHorizontalAlign="WindowCenter"
+    PopupVerticalAlign="WindowCenter"
+    ShowCloseButton="false"
+    CloseAction="None"
+    Modal="true"
+    AllowResize="false"
+    Width="350px"
+    HeaderText=""
+    PopupAnimationType="Fade">
+
+        <ContentCollection>
+        <dx:PopupControlContentControl runat="server">
+            <div class="export-container">
+                <p>Exporting Spreadsheet...<br /> (This can take a minute)</p>
+                <div class="spinner"></div>
+            </div>
+        </dx:PopupControlContentControl>
+
+        </ContentCollection>
+    </dx:ASPxPopupControl>
+
+    <iframe id="downloadFrame" style="display:none;"></iframe>
+<asp:HiddenField ID="hfContractors" runat="server" ClientIDMode="Static" />
+<asp:HiddenField ID="hfSuppliers" runat="server" ClientIDMode="Static" />
+
 </asp:Content>
 
