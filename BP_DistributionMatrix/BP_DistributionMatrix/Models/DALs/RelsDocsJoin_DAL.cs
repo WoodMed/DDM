@@ -392,7 +392,6 @@ GROUP BY
         string query = @"SELECT id, CONCAT(firstname, ' ', lastname) AS name 
                         FROM ddm.Users_FL fl
                         JOIN ddm.Users_PD pd On fl.email = pd.userEmail
-                        where fl.lockedstatus = 'Unlocked'
                         order by name;";
 
         List<Tuple<int, string>> res = new List<Tuple<int, string>>();

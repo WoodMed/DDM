@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Configuration;
+using static DevExpress.Web.Internal.ColorPicker;
 
 public class Export_DAL
 {
@@ -156,14 +157,21 @@ public class Export_DAL
         Dictionary<string, string> ScopeMap = new Dictionary<string, string>();
 
         string usernameList = string.Join("','", usernames);
+        var parameterNames = usernames.Select((u, i) => $"@user{i}").ToList();
         string query = $@"SELECT [IJV], [Name] 
                  FROM ddm.Users_PD 
-                 WHERE Name IN ('{usernameList}');";
+                 WHERE Name IN ({string.Join(",", parameterNames)})";
+
 
         using (SqlConnection connection = new SqlConnection(_connectionString))
         {
             using (SqlCommand cmd = new SqlCommand(query, connection))
             {
+                for (int i = 0; i < usernames.Count; i++)
+                {
+                    cmd.Parameters.AddWithValue(parameterNames[i], usernames[i]);
+                }
+
                 connection.Open();
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
@@ -556,7 +564,6 @@ GROUP BY
         string query = @"SELECT id, CONCAT(firstname, ' ', lastname) AS name 
                         FROM ddm.Users_FL fl
                         JOIN ddm.Users_PD pd On fl.email = pd.userEmail
-                        where fl.lockedstatus = 'Unlocked'
                         order by name;";
 
         List<Tuple<int, string>> res = new List<Tuple<int, string>>();
