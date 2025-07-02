@@ -126,7 +126,6 @@ public class Teams_Dal
         string query = @"SELECT id, CONCAT(firstname, ' ', lastname) AS name, fl.email
                         FROM ddm.Users_FL fl
                         JOIN ddm.Users_PD pd On fl.email = pd.userEmail
-                        where fl.lockedstatus = 'Unlocked'
                         order by name;";
 
         List<TeamUser_Model> res = new List<TeamUser_Model>();

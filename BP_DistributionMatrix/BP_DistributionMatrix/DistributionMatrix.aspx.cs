@@ -42,6 +42,7 @@ public partial class technip : System.Web.UI.Page
     private int _spreadsheetId;
     private List<Tuple<int, string>> _userTeams;
     private List<Tuple<int, string>> _teamMembers;
+    private List<Tuple<int, string>> _teamEmails;
     private Dictionary<string, string> _actionMap;
     List<RelsDocsJoin_Model> _spreadsheetData;
     RelsDocsJoin_DAL _dal;
@@ -724,6 +725,7 @@ public partial class technip : System.Web.UI.Page
         Dictionary<string, string> ScopeMap = new Dictionary<string, string>();
         Export_DAL ExportDAL = new Export_DAL();
 
+        _teamEmails = ExportDAL.GetAllEmails(_teamMembers);
         List<string> formattedUsernames = _teamMembers
         .Select(member =>
         {
@@ -732,7 +734,7 @@ public partial class technip : System.Web.UI.Page
         })
         .ToList();
 
-        ScopeMap = ExportDAL.GetAllScopes(formattedUsernames);
+        ScopeMap = ExportDAL.GetAllScopes(_teamEmails);
 
         // Create Hashmap for the action mapping
         Dictionary<string, string> map = new Dictionary<string, string>();
@@ -937,6 +939,7 @@ public partial class technip : System.Web.UI.Page
         Dictionary<string, string> ScopeMap = new Dictionary<string, string>();
         Export_DAL ExportDAL = new Export_DAL();
 
+        _teamEmails = ExportDAL.GetAllEmails(_teamMembers);
 
         // Get all usernames and scopes of users
         List<string> formattedUsernames = _teamMembers
@@ -946,7 +949,10 @@ public partial class technip : System.Web.UI.Page
             return parts.Length > 1 ? $"{parts[1]}, {parts[0]}" : member.Item2;
         })
         .ToList();
-        ScopeMap = ExportDAL.GetAllScopes(formattedUsernames); // Get all scopes for all team members
+
+        // Get emails from _teamMembers
+
+        ScopeMap = ExportDAL.GetAllScopes(_teamEmails); // Get all scopes for all team members
 
         // Create Hashmap for the action mapping
         var map = new Dictionary<string, string>
@@ -1102,16 +1108,7 @@ public partial class technip : System.Web.UI.Page
                         for (int j = 0; j < TeamCount; j++)
                         {
 
-                            string user = _teamMembers[j].Item2.ToString();
-
-                            // This just adds comma so it works for the scopemap
-                            // Also reverses names for the scopemap
-                            string[] nameParts = user.Split(' ');
-                            if (nameParts.Length == 2)
-                            {
-                                user = $"{nameParts[1]}, {nameParts[0]}";
-                            }
-
+                            string user = _teamEmails[j].Item2.ToString();
 
 
                             // Check if user has assigned scope or not by comparing user scopes and current row scope. If not we skip action
@@ -1124,6 +1121,31 @@ public partial class technip : System.Web.UI.Page
                                 {
                                     continue;
                                 }
+
+                                /*
+                                if (!ScopeMap.TryGetValue(user, out var scopes))
+                                {
+                                    Debug.WriteLine($"User '{user}' not found in ScopeMap.");
+                                    continue;
+                                }
+                                else
+                                {
+                                    Debug.WriteLine($"User '{user}' found. Scopes: '{scopes}'");
+                                    Debug.WriteLine("");
+                                }
+
+                                if (!scopes.Contains(DoubleScopes[0]))
+                                {
+                                    Debug.WriteLine($"Scope '{DoubleScopes[0]}' not found in scopes for user '{user}'.");
+                                    continue;
+                                }
+
+                                if (!scopes.Contains(DoubleScopes[1]))
+                                {
+                                    Debug.WriteLine($"Scope '{DoubleScopes[1]}' not found in scopes for user '{user}'.");
+                                    continue;
+                                }
+                                */
                             }
                             else if (!ScopeMap.TryGetValue(user, out var scopes) || !scopes.Contains(Scope))
                             {

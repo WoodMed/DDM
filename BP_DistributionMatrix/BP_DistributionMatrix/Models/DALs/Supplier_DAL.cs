@@ -271,9 +271,9 @@ public class Supplier_DAL
     public List<int> GetTotalIRACount(string company_id)
     {
         string query = @"SELECT
-                            SUM(CASE WHEN value = 'I' THEN 1 ELSE 0 END) AS I,
-                            SUM(CASE WHEN value = 'R' THEN 1 ELSE 0 END) AS R,
-                            SUM(CASE WHEN value = 'A' THEN 1 ELSE 0 END) AS A
+					COALESCE(SUM(CASE WHEN value = 'I' THEN 1 ELSE 0 END), 0) AS I,
+					COALESCE(SUM(CASE WHEN value = 'R' THEN 1 ELSE 0 END), 0) AS R,
+					COALESCE(SUM(CASE WHEN value = 'A' THEN 1 ELSE 0 END), 0) AS A
                         FROM
                             ddm.User_Rels_Supplier
                         WHERE
@@ -353,7 +353,6 @@ public class Supplier_DAL
         string query = @"SELECT id, CONCAT(firstname, ' ', lastname) AS name 
                         FROM ddm.Users_FL fl
                         JOIN ddm.Users_PD pd On fl.email = pd.userEmail
-                        where fl.lockedstatus = 'Unlocked'
                         order by name;";
 
         List<Tuple<int, string>> res = new List<Tuple<int, string>>();

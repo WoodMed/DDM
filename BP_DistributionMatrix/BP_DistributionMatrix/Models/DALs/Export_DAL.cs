@@ -152,42 +152,66 @@ public class Export_DAL
 
     }
 
-    public Dictionary<string,string> GetAllScopes(List<string> usernames)
+    public Dictionary<string, string> GetAllScopes(List<Tuple<int, string>> emails)
     {
         Dictionary<string, string> ScopeMap = new Dictionary<string, string>();
+        if (emails == null || emails.Count == 0) return ScopeMap;
 
-        string usernameList = string.Join("','", usernames);
-        var parameterNames = usernames.Select((u, i) => $"@user{i}").ToList();
-        string query = $@"SELECT [IJV], [Name] 
-                 FROM ddm.Users_PD 
-                 WHERE Name IN ({string.Join(",", parameterNames)})";
+        // Build parameter list: @email0, @email1, ...
+        var emailParams = emails.Select((e, i) => $"@email{i}").ToList();
+        string inClause = string.Join(",", emailParams);
 
+        string query = $@"SELECT userEmail, [IJV]
+                      FROM ddm.Users_PD
+                      WHERE userEmail IN ({inClause})";
 
         using (SqlConnection connection = new SqlConnection(_connectionString))
+        using (SqlCommand cmd = new SqlCommand(query, connection))
         {
-            using (SqlCommand cmd = new SqlCommand(query, connection))
+            for (int i = 0; i < emails.Count; i++)
             {
-                for (int i = 0; i < usernames.Count; i++)
-                {
-                    cmd.Parameters.AddWithValue(parameterNames[i], usernames[i]);
-                }
+                cmd.Parameters.AddWithValue($"@email{i}", emails[i].Item2);
+            }
 
-                connection.Open();
-                using (SqlDataReader reader = cmd.ExecuteReader())
+            foreach (var param in cmd.Parameters.Cast<SqlParameter>())
+            {
+                Debug.WriteLine($"{param.ParameterName} = '{param.Value}'");
+            }
+
+            connection.Open();
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
                 {
-                    while (reader.Read())
+                    string email = reader["userEmail"]?.ToString().ToLowerInvariant();
+                    string ijv = reader["IJV"]?.ToString();
+
+                    if(email == "abdulrahman.abouelella@uk.bp.com")
                     {
-                        ScopeMap[reader["Name"].ToString()] = reader["IJV"].ToString();
+                        Debug.WriteLine("He's here!");
+                    }
+
+                    if (!string.IsNullOrEmpty(email))
+                    {
+                        ScopeMap[email] = ijv;
                     }
                 }
-
-
             }
         }
 
-        return ScopeMap;
+        string targetEmail = "abdulrahman.abouelella@uk.bp.com";
+        if (ScopeMap.TryGetValue(targetEmail, out var ijvValue))
+        {
+            Debug.WriteLine($"✅ Found in ScopeMap: {targetEmail} → IJV = {ijvValue}");
+        }
+        else
+        {
+            Debug.WriteLine($"❌ NOT found in ScopeMap: {targetEmail}");
+        }
 
+        return ScopeMap;
     }
+
     public string GetScope(string username)
     {
         string query = @"SELECT [IJV], [Name]
@@ -553,6 +577,54 @@ GROUP BY
                     }
                 }
 
+            }
+        }
+
+        return res;
+    }
+
+    public List<Tuple<int, string>> GetAllEmails(List<Tuple<int, string>> TeamMembers)
+    {
+        List<Tuple<int, string>> res = new List<Tuple<int, string>>();
+        if (TeamMembers == null || TeamMembers.Count == 0) return res;
+
+        // Build a list of parameters like @id0, @id1, ...
+        var idParams = TeamMembers.Select((tm, index) => $"@id{index}").ToList();
+        string inClause = string.Join(",", idParams);
+
+        string query = $@"SELECT id, email
+                      FROM [HCCUK_Fusion_DDM].[ddm].[Users_FL]
+                      WHERE id IN ({inClause})";
+
+        Dictionary<int, string> emailLookup = new Dictionary<int, string>();
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            using (SqlCommand cmd = new SqlCommand(query, connection))
+            {
+                for (int i = 0; i < TeamMembers.Count; i++)
+                {
+                    cmd.Parameters.AddWithValue($"@id{i}", TeamMembers[i].Item1);
+                }
+
+                connection.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int id = int.Parse(reader["id"].ToString());
+                        string email = reader["email"]?.ToString();
+                        emailLookup[id] = email;
+
+                    }
+                }
+            }
+        }
+
+        foreach (var member in TeamMembers)
+        {
+            if (emailLookup.TryGetValue(member.Item1, out string email))
+            {
+                res.Add(new Tuple<int, string>(member.Item1, email));
             }
         }
 

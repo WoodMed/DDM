@@ -82,6 +82,15 @@ namespace BP_DistributionMatrix {
             // bind popup
             BindAvailableUsers();
 
+            foreach (var selected in _selectedUsers)
+            {
+                var item = listAvailableUsers.Items.FindByValue(selected.Id.ToString());
+                if (item != null)
+                {
+                    item.Selected = true;
+                }
+            }
+
             Debug.WriteLine("");
 
         }
