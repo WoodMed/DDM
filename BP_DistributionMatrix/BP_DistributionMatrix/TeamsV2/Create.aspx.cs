@@ -41,7 +41,10 @@ namespace BP_DistributionMatrix {
             // Get selected users from Session ID if it exists
             if (Session["TeamUsers"] != null)
             {
-                _selectedUsers = (List<MemberData>)Session["TeamUsers"];
+                _selectedUsers = ((List<MemberData>)Session["TeamUsers"])
+                                    .OrderBy(m => m.Name)
+                                    .ToList();
+
                 TeamsGrid.DataSource = _selectedUsers;
                 TeamsGrid.DataBind();
             }

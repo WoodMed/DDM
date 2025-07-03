@@ -54,14 +54,16 @@ namespace BP_DistributionMatrix {
             _name = _dal.GetTeamName( _teamId );
             TeamLabel.Text += _name;
 
-            List<MemberData> _membersData = _members.Select(user => new MemberData
-            {
-                Id = user.Id,
-                Name = user.Name, // Using Name from TeamUser_Model
-                Role = user.Role
-            }).ToList();
+            List<MemberData> _membersData = _members
+                .OrderBy(user => user.Name)
+                .Select(user => new MemberData
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Role = user.Role
+                }).ToList();
 
-            TeamsGrid.DataSource = _members;
+            TeamsGrid.DataSource = _membersData;
             TeamsGrid.DataBind();
 
             Debug.WriteLine("");

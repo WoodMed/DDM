@@ -58,12 +58,14 @@ namespace BP_DistributionMatrix {
             if (Session["TeamUsers"] == null)
             {
                 List<TeamUser_Model> _membersData = _dal.GetTeamUsers(_teamId, _userId);
-                _members = _membersData.Select(user => new MemberData
-                {
-                    Id = user.Id,
-                    Name = user.Name, // Using Name from TeamUser_Model
-                    Role = user.Role
-                }).ToList();
+                _members = _membersData
+                            .OrderBy(user => user.Name)
+                            .Select(user => new MemberData
+                            {
+                                Id = user.Id,
+                                Name = user.Name,
+                                Role = user.Role
+                            }).ToList();
 
                 TeamsGrid.DataSource = _members;
                 TeamsGrid.DataBind();
