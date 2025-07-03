@@ -1,12 +1,13 @@
-﻿using System;
+﻿using BP_DistributionMatrix.Model;
+using DevExpress.Web;
+using DevExpress.Web.Data;
+using DevExpress.XtraSpreadsheet.Import.Xls;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
-using BP_DistributionMatrix.Model;
-using DevExpress.Web;
-using DevExpress.Web.Data;
 
 namespace BP_DistributionMatrix {
     public partial class Report : System.Web.UI.Page {
@@ -38,7 +39,7 @@ namespace BP_DistributionMatrix {
 
             if (!IsCallback)
             {
-                populateBoxes();
+                populateBoxes(false);
             }
 
         }
@@ -47,13 +48,48 @@ namespace BP_DistributionMatrix {
         {
             string number = DocumentInput.Text.Trim();
 
-            string pattern = @"(^[A-Z0-9]+-)([A-Z]+)(-)([A-Z]+)(-)([A-Z0-9]+)";
-            if (!Regex.IsMatch(number, pattern))
+            string ContractorPattern = @"(^[A-Z0-9]+-)([A-Z]+)(-)([A-Z]+)(-)([A-Z0-9]+)";
+            string SupplierPattern = @"(^[A-Z0-9]+-)([A-Z0-9]+)(-)([A-Z0-9]+)(-)?([0-9]+)?";
+
+            bool noMatch = true;
+            bool isContractor = true;
+
+            // Match for supplier
+            if (Regex.IsMatch(number, SupplierPattern))
+            {
+                isContractor = false;
+                noMatch = false;
+            }
+
+            // Match for contractor
+            if (Regex.IsMatch(number, ContractorPattern))
+            {
+                isContractor = true;
+                noMatch = false;
+            }
+
+            // No match found for either
+            if (noMatch)
             {
                 ErrorLabel.Visible = true;
                 clearPage();
                 return;
             }
+
+            
+            // Different search for contractor and supplier
+            if (isContractor)
+            {
+                Contractor_Search(number);
+            } else
+            {
+                Supplier_Search(number);
+            }
+
+        }
+
+        protected void Contractor_Search(string number)
+        {
 
             string[] parts = number.Split('-');
 
@@ -61,7 +97,8 @@ namespace BP_DistributionMatrix {
             string doc_code = parts[2];
             string contractor_code = parts[3];
 
-            /* List<Report_Models> */ _report = _dal.GetReportActions(disc_code, doc_code, contractor_code); // This is uers and actions
+            /* List<Report_Models> */
+            _report = _dal.GetReportActions(disc_code, doc_code, contractor_code); // This is uers and actions
             List<string> details = _dal.GetReportDetails(disc_code, doc_code, contractor_code); // this is just for the infromation pane
 
             if (_report == null || !_report.Any() || details == null || !details.Any())
@@ -74,10 +111,33 @@ namespace BP_DistributionMatrix {
             Session["CurrentReport"] = _report;
             Session["CurrentDetails"] = details;
 
-            populateBoxes();
+            populateBoxes(true);
         }
 
-        protected void populateBoxes()
+        protected void Supplier_Search(string number)
+        {
+            string[] parts = number.Split('-');
+
+            string PO_Number = parts[1];
+            string SDRML_Code = parts[2];
+
+            /* List<Report_Models> */
+            _report = _dal.GetReportActionsSuppliers(PO_Number, SDRML_Code); // This is users and actions
+            List<string> details = _dal.GetReportDetailsSuppliers(PO_Number, SDRML_Code); // this is just for the information pane
+
+            if (_report == null || !_report.Any() || details == null || !details.Any())
+            {
+                ErrorLabel.Visible = true;
+                clearPage();
+                return;
+            }
+
+            Session["CurrentReport"] = _report;
+            Session["CurrentDetails"] = details;
+
+            populateBoxes(false);
+        }
+        protected void populateBoxes(bool isContractor)
         {
             //if (_isPopulated) return;
             _isPopulated = true;
@@ -116,9 +176,18 @@ namespace BP_DistributionMatrix {
             {
                 List<string> details = (List<string>)Session["CurrentDetails"];
 
-                CompanyLabel.Text = "Contractor: " + details[0];
-                DiscLabel.Text = "Discipline: " + details[1];
-                DocLabel.Text = "Type: " + details[2];
+                if (isContractor)
+                {
+                    CompanyLabel.Text = "Contractor: " + details[0];
+                    DiscLabel.Text = "Discipline: " + details[1];
+                    DocLabel.Text = "Type: " + details[2];
+                }
+                else
+                {
+                    CompanyLabel.Text = "Supplier: " + details[0];
+                    DiscLabel.Text = "PO Number: " + details[1];
+                    DocLabel.Text = "SDRML Code: " + details[2];
+                }
             }
 
         }
